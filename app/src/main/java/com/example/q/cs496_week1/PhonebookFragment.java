@@ -26,12 +26,4 @@ public class PhonebookFragment extends Fragment {
 
         return view;
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-
-
-    }
-
 }

@@ -17,8 +17,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -26,12 +26,14 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.action_phonebook:
                         //Toast.makeText(getApplicationContext(), "phonebook", Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(MainActivity.this, PhonebookActivity.class);
-                        startActivity(intent);
+                        fragment = new PhonebookFragment();
+                        loadFragment(fragment);
+//                        Intent intent = new Intent(MainActivity.this, PhonebookActivity.class);
+//                        startActivity(intent);
                         return true;
                     case R.id.action_gallery:
                         Toast.makeText(getApplicationContext(), "gallery", Toast.LENGTH_LONG).show();
-                        fragment = new GalleryActivity();
+                        fragment = new GalleryFragment();
                         loadFragment(fragment);
                         return true;
                     case R.id.action_three:
@@ -43,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadFragment(new PhonebookFragment());
     }
 
     private void loadFragment(Fragment fragment) {

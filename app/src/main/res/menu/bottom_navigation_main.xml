@@ -6,13 +6,13 @@
         app:showAsAction="ifRoom"
         android:enabled="true"
         android:icon="@drawable/ic_phonebook"
-        android:title="option1" />
+        android:title="PhoneBook" />
     <item
         android:id="@+id/action_gallery"
         app:showAsAction="ifRoom"
         android:enabled="true"
         android:icon="@drawable/ic_gallery"
-        android:title="option2" />
+        android:title="Gallery" />
     <item
         android:id="@+id/action_three"
         app:showAsAction="ifRoom"

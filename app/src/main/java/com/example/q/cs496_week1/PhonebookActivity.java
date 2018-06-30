@@ -1,16 +1,20 @@
 package com.example.q.cs496_week1;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
-public class PhonebookActivity extends AppCompatActivity {
+public class PhonebookActivity extends Fragment {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phonebook);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        Toast.makeText(getApplicationContext(), "phonebook", Toast.LENGTH_LONG).show();
+        View rootView = inflater.inflate(R.layout.activity_phonebook, container, false);
+
+        return rootView;
     }
+
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -43,9 +44,16 @@ public class PhonebookFragment extends Fragment {
         ListView listView = (ListView) view.findViewById(R.id.phonebook_list);
 
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, contacts);
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, contacts);
 
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity().getApplicationContext(), "NotConfigured", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return view;
     }

@@ -1,6 +1,7 @@
 package com.example.q.cs496_week1;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -47,8 +48,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
 
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS)!=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CONTACTS}, 1);
+        String[] PERMISSIONS = {Manifest.permission.READ_CONTACTS, Manifest.permission.READ_EXTERNAL_STORAGE};
+        if (!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this,PERMISSIONS, 1);
         }
 
 
@@ -87,6 +89,17 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         getSupportActionBar().setTitle("Phone Book");
         loadFragment(new PhonebookFragment());
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions){
+        if (context != null && permissions != null) {
+            for (String permission : permissions){
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 

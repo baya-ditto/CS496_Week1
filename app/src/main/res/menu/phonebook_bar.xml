@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/edit_item"
+        android:orderInCategory="10"
+        android:title="@string/add_item"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add" />
+    <item
+        android:id="@+id/add_item"
+        android:orderInCategory="10"
+        android:title="@string/add_item"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add" />
+    <item
+        android:id="@+id/delete_item"
+        android:orderInCategory="10"
+        android:title="@string/add_item"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add" />
+</menu>

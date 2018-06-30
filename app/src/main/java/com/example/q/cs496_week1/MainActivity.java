@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
@@ -31,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
     /*
         MainActivity.json_db =
 	        [
-	            {"name":"test seo","phone_number":["(010) 496-496"],"email_info":[{"email":"asdf@asdf.com","type":"1"},{"email":"asdf@work.com","type":"2"}],"notes":["it's note"]}
+	            {"name":"test seo",
+	            "phone_number":["(010) 496-496"],
+	            "email_info":[{"email":"asdf@asdf.com","type":"1"},
+	            {"email":"asdf@work.com","type":"2"}],
+	            "notes":["it's note"]}
 	        ]
      */
     public static JSONArray json_db = null;
@@ -57,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().setTitle("Phone Book");
                         fragment = new PhonebookFragment();
                         loadFragment(fragment);
-//                        Intent intent = new Intent(MainActivity.this, PhonebookActivity.class);
-//                        startActivity(intent);
                         return true;
                     case R.id.action_gallery:
                         Toast.makeText(getApplicationContext(), "gallery", Toast.LENGTH_LONG).show();
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     @Override

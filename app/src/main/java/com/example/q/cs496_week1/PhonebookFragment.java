@@ -17,6 +17,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -71,11 +72,8 @@ public class PhonebookFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity().getApplicationContext(), "NotConfigured", Toast.LENGTH_SHORT).show();
-
                 Fragment detailFragment = new PhonebookDetailFragment();
-//                detailFragment.newInstance
-                openDetail(detailFragment);
+                openDetail(detailFragment, i);
             }
         });
 
@@ -84,9 +82,26 @@ public class PhonebookFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.activity_itemdetail,menu);
+        super.onCreateOptionsMenu(menu,inflater);
+        MenuItem item = menu.add(Menu.NONE, R.id.add_item, 10, R.string.add_item);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setIcon(R.drawable.ic_add);
     }
-    private void openDetail(final Fragment fragment){
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()) {
+            case R.id.add_item:
+                Toast.makeText(getActivity().getApplicationContext(),"ADD!!", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    private void openDetail(final Fragment fragment, int count){
+        Bundle bundle = new Bundle();
+        bundle.putInt("count",count);
+        fragment.setArguments(bundle);
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.container, fragment);
@@ -133,7 +148,7 @@ public class PhonebookFragment extends Fragment {
                     Cursor emailCur = cr.query(
                             ContactsContract.CommonDataKinds.Email.CONTENT_URI,
                             null,
-                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
                             new String[]{id}, null);
                     while (emailCur.moveToNext()) {
                         // This would allow you get several email addresses

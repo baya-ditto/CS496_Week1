@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CS496_Week1</string>
+    <string name="add_item">ADD</string>
+    <string name="edit_item">ADD</string>
+    <string name="delete_item">ADD</string>
 </resources>

@@ -10,10 +10,13 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.action_phonebook:
                         //Toast.makeText(getApplicationContext(), "phonebook", Toast.LENGTH_LONG).show();
+                        getSupportActionBar().setTitle("Phone Book");
                         fragment = new PhonebookFragment();
                         loadFragment(fragment);
 //                        Intent intent = new Intent(MainActivity.this, PhonebookActivity.class);
@@ -46,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     case R.id.action_gallery:
                         Toast.makeText(getApplicationContext(), "gallery", Toast.LENGTH_LONG).show();
+                        getSupportActionBar().setTitle("Gallery");
                         fragment = new GalleryFragment();
                         loadFragment(fragment);
                         return true;
                     case R.id.action_three:
+                        getSupportActionBar().setTitle("Option3");
                         fragment = new option3Fragment();
                         loadFragment(fragment);
                         Toast.makeText(getApplicationContext(), "third action", Toast.LENGTH_LONG).show();
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        getSupportActionBar().setTitle("Phone Book");
         loadFragment(new PhonebookFragment());
     }
 
@@ -71,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.addToBackStack(null);
         transaction.commit();
     }

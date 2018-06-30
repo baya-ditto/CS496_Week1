@@ -1,14 +1,19 @@
 package com.example.q.cs496_week1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +31,7 @@ public class PhonebookFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_phonebook, container, false);
 
+        setHasOptionsMenu(true);
         ArrayList<String> contacts = new ArrayList<String>();
 
         String[] arrProjection = {
@@ -52,18 +58,32 @@ public class PhonebookFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getActivity().getApplicationContext(), "NotConfigured", Toast.LENGTH_SHORT).show();
+
+                Fragment detailFragment = new PhonebookDetailFragment();
+//                detailFragment.newInstance
+                openDetail(detailFragment);
             }
         });
 
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.activity_itemdetail,menu);
+    }
+    private void openDetail(final Fragment fragment){
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container, fragment);
+        ft.addToBackStack(null);
+        ft.commit();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
     }
-
 
 }

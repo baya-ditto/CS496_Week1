@@ -17,19 +17,31 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
     public static gallery_package gallery_storage = null;
 
+    /*
+        MainActivity.json_db =
+	        [
+	            {"name":"test seo","phone_number":["(010) 496-496"],"email_info":[{"email":"asdf@asdf.com","type":"1"},{"email":"asdf@work.com","type":"2"}],"notes":["it's note"]}
+	        ]
+     */
+    public static JSONArray json_db = null;
+    public static ArrayList<String> names = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
 
-
         if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_CONTACTS)!=PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_CONTACTS}, 1);
-            }
+        }
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

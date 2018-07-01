@@ -29,7 +29,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static gallery_package gallery_storage = null;
-
     /*
         MainActivity.json_db =
 	        [
@@ -60,22 +59,16 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.action_phonebook:
-                        //Toast.makeText(getApplicationContext(), "phonebook", Toast.LENGTH_LONG).show();
-                        getSupportActionBar().setTitle("Phone Book");
                         fragment = new PhonebookFragment();
                         loadFragment(fragment);
                         return true;
                     case R.id.action_gallery:
-                        Toast.makeText(getApplicationContext(), "gallery", Toast.LENGTH_LONG).show();
-                        getSupportActionBar().setTitle("Gallery");
                         fragment = new GalleryFragment();
                         loadFragment(fragment);
                         return true;
                     case R.id.action_three:
-                        getSupportActionBar().setTitle("Option3");
                         fragment = new option3Fragment();
                         loadFragment(fragment);
-                        Toast.makeText(getApplicationContext(), "third action", Toast.LENGTH_LONG).show();
                         return true;
                 }
                 return false;
@@ -87,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        getSupportActionBar().setTitle("Phone Book");
+//        getSupportActionBar().setTitle("Phone Book");
         loadFragment(new PhonebookFragment());
     }
 
@@ -104,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void loadFragment(Fragment fragment) {
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

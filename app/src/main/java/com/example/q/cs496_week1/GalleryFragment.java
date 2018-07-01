@@ -64,7 +64,8 @@ public class GalleryFragment extends Fragment {
             if(convertView == null) {
                 picturesView = new ImageView(context);
                 picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                picturesView.setLayoutParams(new GridView.LayoutParams(340, 270));
+                picturesView.setAdjustViewBounds(true);
+//                picturesView.setLayoutParams(new GridView.LayoutParams(340, 200));
             } else {
                 picturesView = (ImageView) convertView;
             }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -52,17 +53,10 @@ public class PhonebookFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.activity_phonebook, container, false);
 
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
         ArrayList<String> contacts = new ArrayList<String>();
 
-        String[] arrProjection = {
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.TYPE
-        };
-
         ListView listView = (ListView) view.findViewById(R.id.phonebook_list);
-
 
         ArrayAdapter<String> adapter;
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, MainActivity.names);
@@ -72,8 +66,16 @@ public class PhonebookFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Fragment detailFragment = new PhonebookDetailFragment();
-                openDetail(detailFragment, i);
+                Intent intent = new Intent(getActivity(), PhonebookDetailActivity.class);
+                intent.putExtra("index", i);
+                startActivity(intent);
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"ADD",Toast.LENGTH_LONG).show();
             }
         });
 

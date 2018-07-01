@@ -35,9 +35,9 @@ public class PhonebookDetailFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String name = contacts.optString("name");
-        TextView nameLabel = view.findViewById(R.id.name_label);
-        nameLabel.setText(name);
+//        String name = contacts.optString("name");
+//        TextView nameLabel = view.findViewById(R.id.name_label);
+//        nameLabel.setText(name);
 
         return view;
     }
@@ -59,8 +59,6 @@ public class PhonebookDetailFragment extends Fragment {
         switch(item.getItemId()) {
             case android.R.id.home:
                 getFragmentManager().popBackStack();
-                ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-                ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
                 return true;
             case R.id.edit_item:
                 Toast.makeText(getActivity().getApplicationContext(),"EDIT!!", Toast.LENGTH_LONG).show();
@@ -71,6 +69,14 @@ public class PhonebookDetailFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
     }
 
 

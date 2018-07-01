@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 	            "phone_number":["(010) 496-496"],
 	            "email_info":[{"email":"asdf@asdf.com","type":"1"},
 	            {"email":"asdf@work.com","type":"2"}],
-	            "notes":["it's note"]}
+	            "note":"it's note"}
 	        ]
      */
     public static JSONArray json_db = null;

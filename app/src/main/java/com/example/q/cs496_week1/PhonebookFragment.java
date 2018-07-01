@@ -128,7 +128,8 @@ public class PhonebookFragment extends Fragment {
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 ArrayList<String> phone_numbers = new ArrayList<String>();
                 ArrayList<Pair<String, String>> emails = new ArrayList<Pair<String, String>>();
-                ArrayList<String> notes = new ArrayList<String>();
+                //ArrayList<String> notes = new ArrayList<String>();
+                String note = "";
 
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                     System.out.println("name : " + name + ", ID : " + id);
@@ -172,10 +173,10 @@ public class PhonebookFragment extends Fragment {
                             ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
                     Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
                     if (noteCur.moveToFirst()) {
-                        String note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
+                        note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
                         System.out.println("Note " + note);
 
-                        notes.add(note);
+                        //notes.add(note);
                     }
                     noteCur.close();
 
@@ -198,7 +199,7 @@ public class PhonebookFragment extends Fragment {
                         user.put("name", name);
                         user.put("phone_number", new JSONArray(phone_numbers));
                         user.put("email_info", email_infos);
-                        user.put("notes", new JSONArray(notes));
+                        user.put("note", note);
                         MainActivity.json_db.put(user);
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -31,14 +31,12 @@ import java.util.ArrayList;
 
 public class GalleryFragment extends Fragment {
 
-    public static final String TAG_INPUT = "input";
     private ArrayList<String> images;
 
-    private View rootView;
-    int lastIndex;
+    private int lastIndex;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
-        rootView = inflater.inflate(R.layout.activity_galley, container, false);
+        final View rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
         final GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
         if(MainActivity.hasPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}))
@@ -46,10 +44,11 @@ public class GalleryFragment extends Fragment {
 
         lastIndex = -1;
 
+        final ImageView image = (ImageView)rootView.findViewById(R.id.gallery_detail);
+
         gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ImageView image = (ImageView)rootView.findViewById(R.id.gallery_detail);
                 if(lastIndex == i) {
                     image.setVisibility(View.INVISIBLE);
                     ViewGroup.LayoutParams params = image.getLayoutParams();
@@ -63,9 +62,22 @@ public class GalleryFragment extends Fragment {
                     params.height = 800;
                     image.setLayoutParams(params);
                     Glide.with(getActivity()).load(images.get(i)).into(image);
-                    gallery.smoothScrollToPosition(500);
+                    gallery.smoothScrollToPositionFromTop(i,0);
                     lastIndex = i;
                 }
+            }
+        });
+
+        image.setOnTouchListener(new OnSwipeTouchListener(getActivity().getApplicationContext()){
+            @Override
+            public void onSwipeRight() {
+                if(lastIndex == 0) return;
+                gallery.performItemClick(rootView,lastIndex-1, 0);
+            }
+            @Override
+            public void onSwipeLeft() {
+                if(lastIndex >= images.size()) return;
+                gallery.performItemClick(rootView,lastIndex+1, 0);
             }
         });
 
@@ -102,7 +114,6 @@ public class GalleryFragment extends Fragment {
                 picturesView = (ImageView) convertView;
             }
             Glide.with(context).load(images.get(position))
-                    .thumbnail(0.1f)
                     .placeholder(R.drawable.ic_add).centerCrop()
                     .into(picturesView);
             return picturesView;
@@ -137,13 +148,13 @@ public class GalleryFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        if (rootView != null)
-        {
-            if (MainActivity.gallery_storage == null)
-                MainActivity.gallery_storage = new gallery_package();
-
-//            Log.d("test", "gallery_storage.input = " + MainActivity.gallery_storage.input);
-        }
+//        if (rootView != null)
+//        {
+//            if (MainActivity.gallery_storage == null)
+//                MainActivity.gallery_storage = new gallery_package();
+//
+////            Log.d("test", "gallery_storage.input = " + MainActivity.gallery_storage.input);
+//        }
         super.onDestroyView();
 //        Log.d("test", "onDestroyView finished");
     }
@@ -151,7 +162,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MainActivity.gallery_storage = null;
+//        MainActivity.gallery_storage = null;
 //        Log.d("test", "onDestroy finished");
     }
 }

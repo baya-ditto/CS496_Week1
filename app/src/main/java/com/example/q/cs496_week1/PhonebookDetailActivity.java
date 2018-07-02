@@ -1,10 +1,15 @@
 package com.example.q.cs496_week1;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.provider.ContactsContract;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,7 +40,7 @@ import java.util.ArrayList;
 
 public class PhonebookDetailActivity extends AppCompatActivity {
 
-    private int index;
+    private JSONObject contacts = new JSONObject();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +52,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        JSONObject contacts = new JSONObject();
-        index = getIntent().getIntExtra("index",0);
-
-        try {
-            contacts = (JSONObject)MainActivity.json_db.get(index);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        contacts = MainActivity.contactList.getJSONObject(getIntent().getIntExtra("index",0));
         String name = contacts.optString("name");
 
         getSupportActionBar().setTitle(name);
@@ -68,7 +66,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
 
         // show phone numbers
         LinearLayout numbers_layout = (LinearLayout) findViewById(R.id.numbers_layout);
-        JSONArray numbers = contacts.optJSONArray("phone_number");
+        JSONArray numbers = contacts.optJSONArray("numbers");
 
         for (int i = 0; i < numbers.length(); ++i) {
             String number = numbers.optString(i);
@@ -101,7 +99,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
 
         // show email infos
         LinearLayout emails_layout = findViewById(R.id.emails_layout);
-        JSONArray email_infos = contacts.optJSONArray("email_info");
+        JSONArray email_infos = contacts.optJSONArray("emails");
         for (int i = 0; i < email_infos.length(); ++i)
         {
             LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -170,6 +168,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.delete_item:
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("삭제");
                 builder.setMessage("정말로 삭제하시겠습니까?");
@@ -179,6 +178,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Toast.makeText(getApplicationContext(), "okay", Toast.LENGTH_LONG).show();
                                 //TODO: delete & update contact
+                                deleteContact();
                                 onBackPressed();
                             }
                         });
@@ -190,7 +190,6 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                             }
                         });
                 builder.show();
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,6 +237,18 @@ public class PhonebookDetailActivity extends AppCompatActivity {
 
     }
 
-    private void deleteContact() throws JSONException {
+    private void deleteContact() {
+        ContentResolver contactHelper = getApplicationContext().getContentResolver();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        String[] args = new String[]{contacts.optString("id")};
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
+                .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=?", args).build());
+        try{
+            contactHelper.applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+        }
     }
 }

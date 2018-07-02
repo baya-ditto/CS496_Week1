@@ -30,14 +30,6 @@ public class PhonebookDetailFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         JSONObject contacts = new JSONObject();
-        try {
-            contacts = (JSONObject)MainActivity.json_db.get(this.getArguments().getInt("count"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-//        String name = contacts.optString("name");
-//        TextView nameLabel = view.findViewById(R.id.name_label);
-//        nameLabel.setText(name);
 
         return view;
     }

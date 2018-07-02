@@ -34,15 +34,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonebook_edit);
 
-        contacts = new JSONObject();
-        index = getIntent().getIntExtra("index",0);
-
-        try {
-            contacts = (JSONObject)MainActivity.json_db.get(index);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        contacts = MainActivity.contactList.getJSONObject(getIntent().getIntExtra("index",0));
 
         if (getIntent().getIntExtra(ModeMsg,-1) == EDIT_MODE)
             show_prev_data();

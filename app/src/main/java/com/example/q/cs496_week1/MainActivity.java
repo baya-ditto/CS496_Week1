@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadContacts() {
-        ContentResolver cr = getActivity().getContentResolver();
+        ContentResolver cr = this.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
 

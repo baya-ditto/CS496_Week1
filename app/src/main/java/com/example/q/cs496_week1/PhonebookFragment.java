@@ -38,25 +38,18 @@ public class PhonebookFragment extends Fragment {
 
     String tag = null;
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //논의 필요
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View view = inflater.inflate(R.layout.activity_phonebook, container, false);
 
-//        setHasOptionsMenu(true);
-        ArrayList<String> contacts = new ArrayList<String>();
-
         ListView listView = (ListView) view.findViewById(R.id.phonebook_list);
 
         ArrayAdapter<String> adapter;
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, MainActivity.names);
+
+        ArrayList<String> names = MainActivity.contactList.getNameArray();
+
+        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, names);
 
         listView.setAdapter(adapter);
 
@@ -97,16 +90,16 @@ public class PhonebookFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-    private void openDetail(final Fragment fragment, int count){
-        Bundle bundle = new Bundle();
-        bundle.putInt("count",count);
-        fragment.setArguments(bundle);
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.container, fragment);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
+//    private void openDetail(final Fragment fragment, int count){
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("count",count);
+//        fragment.setArguments(bundle);
+//        FragmentManager fm = getFragmentManager();
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.replace(R.id.container, fragment);
+//        ft.addToBackStack(null);
+//        ft.commit();
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         if (MainActivity.json_db == null) {
             MainActivity.json_db = new JSONArray();
             MainActivity.names = new ArrayList<String>();
+
+            // TODO:
             if(MainActivity.hasPermissions(this,new String[]{Manifest.permission.READ_CONTACTS}))
                 loadContacts();
         }
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject user = new JSONObject();
                     try {
                         MainActivity.names.add(name);
+                        user.put("id", id);
                         user.put("name", name);
                         user.put("phone_number", new JSONArray(phone_numbers));
                         user.put("email_info", email_infos);

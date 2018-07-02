@@ -8,4 +8,5 @@
     <color name="black">#000000</color>
     <color name="basic">@android:color/tab_indicator_text</color>
     <color name="transparent">@android:color/transparent</color>
+    <color name="green"> #009900</color>
 </resources>

@@ -2,6 +2,7 @@ package com.example.q.cs496_week1;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -163,7 +164,10 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.edit_item:
-                switch_to_edit_layout();
+                //switch_to_edit_layout();
+                Intent intent = new Intent(PhonebookDetailActivity.this, PhonebookEditActivity.class);
+                intent.putExtra(PhonebookEditActivity.ModeMsg, PhonebookEditActivity.EDIT_MODE);
+                startActivity(intent);
                 return true;
             case R.id.delete_item:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -1,9 +1,11 @@
 package com.example.q.cs496_week1;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -28,8 +30,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 public class PhonebookDetailActivity extends AppCompatActivity {
 
+    private int index;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,9 +47,10 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         JSONObject contacts = new JSONObject();
+        index = getIntent().getIntExtra("index",0);
 
         try {
-            contacts = (JSONObject)MainActivity.json_db.get( getIntent().getIntExtra("index",0));
+            contacts = (JSONObject)MainActivity.json_db.get(index);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -157,11 +163,30 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.edit_item:
-                Toast.makeText(this,"EDIT",Toast.LENGTH_LONG);
                 switch_to_edit_layout();
                 return true;
             case R.id.delete_item:
-                Toast.makeText(this,"DELETE",Toast.LENGTH_LONG);
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("삭제");
+                builder.setMessage("정말로 삭제하시겠습니까?");
+                builder.setPositiveButton("예",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getApplicationContext(), "okay", Toast.LENGTH_LONG).show();
+                                //TODO: delete & update contact
+                                onBackPressed();
+                            }
+                        });
+                builder.setNegativeButton("아니오",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getApplicationContext(), "Deny", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                builder.show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -207,5 +232,8 @@ public class PhonebookDetailActivity extends AppCompatActivity {
 
         // TODO: apply to device
 
+    }
+
+    private void deleteContact() throws JSONException {
     }
 }

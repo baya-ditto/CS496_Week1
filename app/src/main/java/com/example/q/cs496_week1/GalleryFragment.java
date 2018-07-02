@@ -40,7 +40,7 @@ public class GalleryFragment extends Fragment {
 
         rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
-        GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
+        final GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
         if(MainActivity.hasPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}))
             gallery.setAdapter(new ImageAdapter(getActivity()));
 
@@ -63,6 +63,7 @@ public class GalleryFragment extends Fragment {
                     params.height = 800;
                     image.setLayoutParams(params);
                     Glide.with(getActivity()).load(images.get(i)).into(image);
+                    gallery.smoothScrollToPosition(500);
                     lastIndex = i;
                 }
             }

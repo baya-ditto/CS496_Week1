@@ -41,15 +41,8 @@ public class PhonebookFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
-        //논의 필요
-        if (MainActivity.json_db == null) {
-            MainActivity.json_db = new JSONArray();
-            MainActivity.names = new ArrayList<String>();
-            if(MainActivity.hasPermissions(getActivity(),new String[]{Manifest.permission.READ_CONTACTS}))
-                loadContacts();
-        }
         super.onCreate(savedInstanceState);
+        //논의 필요
     }
 
     @Override
@@ -121,95 +114,4 @@ public class PhonebookFragment extends Fragment {
 
     }
 
-    public void loadContacts() {
-        ContentResolver cr = getActivity().getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                null, null, null, null);
-
-        if (cur.getCount() > 0) {
-            while (cur.moveToNext()) {
-                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                ArrayList<String> phone_numbers = new ArrayList<String>();
-                ArrayList<Pair<String, String>> emails = new ArrayList<Pair<String, String>>();
-                //ArrayList<String> notes = new ArrayList<String>();
-                String note = "";
-
-                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    System.out.println("name : " + name + ", ID : " + id);
-
-                    // get the phone number
-                    Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                            new String[]{id}, null);
-                    while (pCur.moveToNext()) {
-                        String phone = pCur.getString(
-                                pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        System.out.println("phone" + phone);
-                        phone_numbers.add(phone);
-                    }
-                    pCur.close();
-
-
-                    // get email and type
-                    Cursor emailCur = cr.query(
-                            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-                            null,
-                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
-                            new String[]{id}, null);
-                    while (emailCur.moveToNext()) {
-                        // This would allow you get several email addresses
-                        // if the email addresses were stored in an array
-                        String email = emailCur.getString(
-                                emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                        String emailType = emailCur.getString(
-                                emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
-
-                        System.out.println("Email " + email + " Email Type : " + emailType);
-
-                        emails.add(new Pair<String, String>(email, emailType));
-                    }
-                    emailCur.close();
-
-                    // Get note.......
-                    String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?";
-                    String[] noteWhereParams = new String[]{id,
-                            ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE};
-                    Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
-                    if (noteCur.moveToFirst()) {
-                        note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-                        System.out.println("Note " + note);
-
-                        //notes.add(note);
-                    }
-                    noteCur.close();
-
-                    // email_info preprocessing
-                    JSONArray email_infos = new JSONArray();
-                    for (Pair<String, String> pair : emails) {
-                        JSONObject email_info = new JSONObject();
-                        try {
-                            email_info.put("email", pair.first);
-                            email_info.put("type", pair.second);
-                            email_infos.put(email_info);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    JSONObject user = new JSONObject();
-                    try {
-                        MainActivity.names.add(name);
-                        user.put("name", name);
-                        user.put("phone_number", new JSONArray(phone_numbers));
-                        user.put("email_info", email_infos);
-                        user.put("note", note);
-                        MainActivity.json_db.put(user);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 }

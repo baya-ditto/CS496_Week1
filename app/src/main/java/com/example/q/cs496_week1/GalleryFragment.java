@@ -1,10 +1,13 @@
 package com.example.q.cs496_week1;
 
+import android.Manifest;
 import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,12 +35,38 @@ public class GalleryFragment extends Fragment {
     private ArrayList<String> images;
 
     private View rootView;
+    int lastIndex;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
         GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
-        gallery.setAdapter(new ImageAdapter(getActivity()));
+        if(MainActivity.hasPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}))
+            gallery.setAdapter(new ImageAdapter(getActivity()));
+
+        lastIndex = -1;
+
+        gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ImageView image = (ImageView)rootView.findViewById(R.id.gallery_detail);
+                if(lastIndex == i) {
+                    image.setVisibility(View.INVISIBLE);
+                    ViewGroup.LayoutParams params = image.getLayoutParams();
+                    params.height = 0;
+                    image.setLayoutParams(params);
+                    lastIndex = -1;
+                }
+                else {
+                    image.setVisibility(View.VISIBLE);
+                    ViewGroup.LayoutParams params = image.getLayoutParams();
+                    params.height = 800;
+                    image.setLayoutParams(params);
+                    Glide.with(getActivity()).load(images.get(i)).into(image);
+                    lastIndex = i;
+                }
+            }
+        });
 
         return rootView;
     }

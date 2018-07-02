@@ -1,5 +1,6 @@
 package com.example.q.cs496_week1;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,10 +41,13 @@ public class PhonebookFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        //논의 필요
         if (MainActivity.json_db == null) {
             MainActivity.json_db = new JSONArray();
             MainActivity.names = new ArrayList<String>();
-            loadContacts();
+            if(MainActivity.hasPermissions(getActivity(),new String[]{Manifest.permission.READ_CONTACTS}))
+                loadContacts();
         }
         super.onCreate(savedInstanceState);
     }

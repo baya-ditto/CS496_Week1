@@ -7,36 +7,49 @@
     android:layout_height="match_parent"
     tools:context=".GalleryFragment">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/gallery_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@color/black"
+            android:visibility="invisible" />
 
-            <GridView
-                android:id="@+id/galleryGridView"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:columnWidth="280dp"
-                android:gravity="center"
-                android:horizontalSpacing="2dp"
-                android:numColumns="2"
-                android:padding="2dp"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="2dp"
-                tools:layout_editor_absoluteX="4dp"
-                tools:layout_editor_absoluteY="0dp">
+                android:orientation="vertical">
 
-            </GridView>
-        </LinearLayout>
-    </ScrollView>
+                <GridView
+                    android:id="@+id/galleryGridView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnWidth="280dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="2dp"
+                    android:numColumns="2"
+                    android:padding="2dp"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="2dp"
+                    tools:layout_editor_absoluteX="4dp"
+                    tools:layout_editor_absoluteY="0dp">
 
+                </GridView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </RelativeLayout>

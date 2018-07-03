@@ -4,6 +4,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -161,7 +162,10 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.edit_item:
-                switch_to_edit_layout();
+                //switch_to_edit_layout();
+                Intent intent = new Intent(PhonebookDetailActivity.this, PhonebookEditActivity.class);
+                intent.putExtra(PhonebookEditActivity.ModeMsg, PhonebookEditActivity.EDIT_MODE);
+                startActivity(intent);
                 return true;
             case R.id.delete_item:
 

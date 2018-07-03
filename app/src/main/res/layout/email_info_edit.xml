@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/email_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:singleLine="true"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/basic"
+        android:hint="example@gmail.com"/>
+
+    <Button
+        android:id="@+id/type"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"
+        android:gravity="center" />
+    <Button
+        android:id="@+id/delete_email"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_weight="0.1"
+        android:background="@drawable/delete_circle"
+        android:gravity="center" />
+</LinearLayout>

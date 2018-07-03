@@ -20,7 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PhonebookDetailActivity"></activity>
+        <activity android:name=".PhonebookDetailActivity" />
+        <activity android:name=".PhonebookEditActivity"></activity>
     </application>
 
 </manifest>

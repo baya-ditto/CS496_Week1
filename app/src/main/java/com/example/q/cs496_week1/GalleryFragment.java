@@ -2,8 +2,10 @@ package com.example.q.cs496_week1;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,18 +35,24 @@ import java.util.ArrayList;
 public class GalleryFragment extends Fragment {
 
     private ArrayList<String> images;
+    private static View rootView;
 
     private int lastIndex;
+    private int tmp=0;
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
-        final View rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
         final GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
         if(MainActivity.hasPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}))
             gallery.setAdapter(new ImageAdapter(getActivity()));
+        if(tmp==0) {
+            tmp += 1;
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }
 
         lastIndex = -1;
-
         final ImageView image = (ImageView)rootView.findViewById(R.id.gallery_detail);
 
         gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,6 +93,40 @@ public class GalleryFragment extends Fragment {
         return rootView;
     }
 
+    private class loadGallery extends AsyncTask<String, String, ImageAdapter> {
+        ProgressDialog pDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Fetching Contacts...");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        @Override
+        protected ImageAdapter doInBackground(String... strings) {
+            ImageAdapter adapter = new ImageAdapter(getActivity());
+            return adapter;
+        }
+
+        @Override
+        protected void onPostExecute(ImageAdapter result) {
+            super.onPostExecute(result);
+
+            if (result != null) {
+                final GridView gallery = (GridView) rootView.findViewById(R.id.galleryGridView);
+                if(MainActivity.hasPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}))
+                    gallery.setAdapter(result);
+            }
+            if (pDialog.isShowing())
+                pDialog.dismiss();
+        }
+    }
+
+
     private class ImageAdapter extends BaseAdapter {
         private Activity context;
         public ImageAdapter(Activity localContext){
@@ -107,8 +150,8 @@ public class GalleryFragment extends Fragment {
             ImageView picturesView;
             if(convertView == null) {
                 picturesView = new ImageView(context);
-                picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 picturesView.setAdjustViewBounds(true);
+                picturesView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 //                picturesView.setLayoutParams(new GridView.LayoutParams(340, 200));
             } else {
                 picturesView = (ImageView) convertView;
@@ -157,6 +200,12 @@ public class GalleryFragment extends Fragment {
 //        }
         super.onDestroyView();
 //        Log.d("test", "onDestroyView finished");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        new loadGallery().execute();
     }
 
     @Override

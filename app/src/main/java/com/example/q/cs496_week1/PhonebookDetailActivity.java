@@ -109,8 +109,8 @@ public class PhonebookDetailActivity extends AppCompatActivity {
             String email = email_info.optString("email");
             EditText email_text_view = info_layout.findViewById(R.id.email);
             email_text_view.setText(email);
-
             String type = email_info.optString("type");
+
             TextView type_text_view = info_layout.findViewById(R.id.type);
             switch (type) {
                 case "1":

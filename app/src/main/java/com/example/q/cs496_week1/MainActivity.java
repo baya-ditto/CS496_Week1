@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.json_db =
 	        [
 	            {"name":"test seo",
-	            "phone_number":["(010) 496-496"],
-	            "email_info":[{"email":"asdf@asdf.com","type":"1"},
+	            "numbers":["(010) 496-496"],
+	            "emails":[{"email":"asdf@asdf.com","type":"1"},
 	            {"email":"asdf@work.com","type":"2"}],
 	            "note":"it's note"}
 	        ]

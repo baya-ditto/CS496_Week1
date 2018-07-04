@@ -1,26 +1,19 @@
 package com.example.q.cs496_week1;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
-import android.text.InputType;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,39 +21,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-public class PhonebookEditActivity extends AppCompatActivity {
-
-    private String contactid = null;
-    private JSONObject contacts = null;
-    private String name = null;
-
+public class PhonebookAddActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phonebook_edit);
+        setContentView(R.layout.activity_phonebook_add);
 
+/*        Toolbar mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        setSupportActionBar(mToolbar);
 
-        contactid = getIntent().getStringExtra("contactid");
-        contacts = MainActivity.contactList.getJSONObjectByContactId(contactid);
-        show_prev_data();
-
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
 
         Button save_but = findViewById(R.id.save_button);
         Button cancel_but = findViewById(R.id.cancel_button);
+        Button add_number_but = findViewById(R.id.add_number_button);
+        Button add_email_but = findViewById(R.id.add_email_button);
 
         save_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                Log.d("TESTTEST", "Here?");
                 save_interact();
             }
         });
@@ -68,7 +51,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
         cancel_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
-                AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookEditActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookAddActivity.this);
                 builder.setTitle("저장하고 돌아가시겠습니까?");
                 builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
                     @Override
@@ -88,11 +71,25 @@ public class PhonebookEditActivity extends AppCompatActivity {
             }
         });
 
+        add_number_but.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                LinearLayout numbers_layout = findViewById(R.id.numbers_layout);
+                numbers_layout.addView(get_number_info_layout(null));
+            }
+        });
+
+        add_email_but.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                LinearLayout emails_layout = findViewById(R.id.emails_layout);
+                emails_layout.addView(get_email_info_layout(null, "개인"));
+            }
+        });
     }
 
-
     private void save_interact() {
-        AlertDialog.Builder builder0 = new AlertDialog.Builder(PhonebookEditActivity.this);
+        AlertDialog.Builder builder0 = new AlertDialog.Builder(PhonebookAddActivity.this);
         builder0.setTitle("저장하시겠습니까?");
         builder0.setPositiveButton("네", new DialogInterface.OnClickListener() {
             @Override
@@ -100,12 +97,10 @@ public class PhonebookEditActivity extends AppCompatActivity {
                 if (saveData()){
                     dialog.dismiss();
                     System.out.println("Save success, let's go back!");
-                    Intent intent = new Intent(PhonebookEditActivity.this, MainActivity.class);
-                    intent.putExtra(MainActivity.redirectTag, MainActivity._phonebook_detail);
-                    intent.putExtra(MainActivity.contactidTag, contactid);
+                    Intent intent = new Intent(PhonebookAddActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookEditActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookAddActivity.this);
                     builder.setTitle("저장이 실패했습니다. 작업을 다시 하시겠습니까?");
                     builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
                         @Override
@@ -134,16 +129,13 @@ public class PhonebookEditActivity extends AppCompatActivity {
         AlertDialog dialog = builder0.create();
         dialog.show();
     }
-
-    private LinearLayout get_number_info(String number, String data_id){
+    private LinearLayout get_number_info_layout(String number){
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.number_info_edit, null);
 
         TextView number_text_view = info_layout.findViewById(R.id.number);
         if (number != null)
             number_text_view.setText(number);
-        if (data_id != null)
-            number_text_view.setTag(data_id);
 
         Button delete_number_button = info_layout.findViewById(R.id.delete_number);
         delete_number_button.setOnClickListener(new View.OnClickListener(){
@@ -155,15 +147,13 @@ public class PhonebookEditActivity extends AppCompatActivity {
         return info_layout;
     }
 
-    private LinearLayout get_email_info(String email, String type, String data_id){
+    private LinearLayout get_email_info_layout(String email, String type){
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_edit, null);
 
         EditText email_text_view = info_layout.findViewById(R.id.email);
         if (email != null)
             email_text_view.setText(email);
-        if (data_id != null)
-            email_text_view.setTag(data_id);
 
         Button type_button = info_layout.findViewById(R.id.type);
         switch (type) {
@@ -188,44 +178,6 @@ public class PhonebookEditActivity extends AppCompatActivity {
         return info_layout;
     }
 
-    private void show_prev_data() {
-        EditText name_text = findViewById(R.id.name);
-        name = contacts.optString("name");
-        name_text.setText(name);
-
-        // show phone numbers
-        LinearLayout numbers_layout = (LinearLayout) findViewById(R.id.numbers_layout);
-        JSONArray number_infos = contacts.optJSONArray("numbers");
-        for (int i = 0; i < number_infos.length(); ++i) {
-            JSONObject number_info = number_infos.optJSONObject(i);
-
-            String number = number_info.optString("number");
-            String data_id = number_info.optString("id");
-
-            numbers_layout.addView(get_number_info(number, data_id));
-        }
-
-        // show email infos
-        LinearLayout emails_layout = findViewById(R.id.emails_layout);
-        JSONArray email_infos = contacts.optJSONArray("emails");
-
-        for (int i = 0; i < email_infos.length(); ++i)
-        {
-            JSONObject email_info = email_infos.optJSONObject(i);
-
-            String email = email_info.optString("email");
-            String type = email_info.optString("type");
-            String data_id = email_info.optString("id");
-
-            emails_layout.addView(get_email_info(email, type, data_id));
-        }
-
-        // show note info
-        String note = contacts.optString("notes");
-        EditText note_text_view = findViewById(R.id.note);
-        note_text_view.setText(note);
-    }
-
     public static boolean isValidEmail(CharSequence target) {
         return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }
@@ -240,26 +192,26 @@ public class PhonebookEditActivity extends AppCompatActivity {
         }
         return formatted_number;
     }
+
     private boolean saveData(){
         EditText name_text = findViewById(R.id.name);
-        name = name_text.getText().toString();
+        String name = name_text.getText().toString();
 
         LinearLayout numbers_layout = findViewById(R.id.numbers_layout);
-        ArrayList<Pair<String, String>> numbers = new ArrayList<>();
+        ArrayList<String> numbers = new ArrayList<>();
         for (int i = 0 ; i < numbers_layout.getChildCount(); ++i){
             View v = numbers_layout.getChildAt(i);
             if (v instanceof LinearLayout){
                 EditText number_text = v.findViewById(R.id.number);
                 String number = number_text.getText().toString();
-                String data_id = (String) number_text.getTag();
-                numbers.add(new Pair<String, String>(my_phone_format(number), data_id));
+                numbers.add(my_phone_format(number));
             }
         }
 
         Log.d("TESTTEST", "here I am1");
 
         LinearLayout emails_layout = findViewById(R.id.emails_layout);
-        ArrayList<Triplet<String, String, String>> email_infos = new ArrayList<>();
+        ArrayList<Pair<String, String>> email_infos = new ArrayList<>();
         for (int i = 0 ; i < emails_layout.getChildCount(); ++i){
             View v = emails_layout.getChildAt(i);
             if (v instanceof LinearLayout){
@@ -278,9 +230,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
                 Button type_button = v.findViewById(R.id.type);
                 String type = type_button.getText().toString();
 
-                String data_id = (String) email_text.getTag();
-
-                email_infos.add(new Triplet<String, String, String>(email_seq.toString(), type, data_id));
+                email_infos.add(new Pair<String, String>(email_seq.toString(), type));
             }
         }
 
@@ -288,7 +238,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
         String note = note_text.getText().toString();
 
         Log.d("TESTTEST", "here I am");
-        boolean success = updateContact(contacts.optString("contactid", null), name, numbers, email_infos, note);
+        boolean success = addContact(name, numbers, email_infos, note);
         if (!success){
             Toast.makeText(getApplicationContext(), "Update failed", Toast.LENGTH_LONG);
         }
@@ -296,41 +246,43 @@ public class PhonebookEditActivity extends AppCompatActivity {
         return success;
     }
 
+    public boolean addContact(String contactName, ArrayList<String> contactNumbers, ArrayList<Pair<String, String>> contactEmail_infos, String note){
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
+        int index = ops.size();
 
+        // Adding insert operation to operations list
+        // For insert a new raw contact in the ContactsContract.RawContacts
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+                .build());
 
-    public boolean updateContact(String contactID, String contactName, ArrayList<Pair<String, String>> contactNumbers, ArrayList<Triplet<String, String, String>> contactEmail_infos, String note) {
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        // For insert display name in the ContactsContract.Data
+        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contactName)
+                .build());
 
+        // For insert Mobile Number in the ContactsContract.Data
+        for (int i = 0; i < contactNumbers.size(); ++i){ // contactNumbers.size() should be > 0 (since I did not added size=0 in DetailActivity
+            String number = contactNumbers.get(i);
 
-        ops.add(ContentProviderOperation
-            .newUpdate(ContactsContract.Data.CONTENT_URI)
-            .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE
-                    + "=?", new String[]{contactID, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE})
-            .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, contactName)
-            .build());
-
-
-        for (int i = 0; i < contactNumbers.size(); ++i){
-            Pair<String, String> pair = contactNumbers.get(i);
-            String number = pair.first;
-            String data_id = pair.second;
-            assert data_id != null;
-            ops.add(ContentProviderOperation
-                    .newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE
-                                    + "=? AND " + ContactsContract.CommonDataKinds.Organization.TYPE + "=? AND " + ContactsContract.Data._ID + "=?"
-                            , new String[]{contactID, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
-                                    String.valueOf(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE), data_id})
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
+                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
                     .build());
         }
 
+
+        // For insert Work Email in the ContactsContract.Data
         for (int i = 0; i < contactEmail_infos.size(); ++i){
-            Triplet<String, String, String> email_info = contactEmail_infos.get(i);
+            Pair<String, String> email_info = contactEmail_infos.get(i);
             String contactEmail = email_info.first;
             String contactEmailType = email_info.second;
-            String data_id = email_info.third;
             int emailType = ContactsContract.CommonDataKinds.Email.TYPE_OTHER;
             switch (contactEmailType) {
                 case "개인":
@@ -340,23 +292,21 @@ public class PhonebookEditActivity extends AppCompatActivity {
                     emailType = ContactsContract.CommonDataKinds.Email.TYPE_WORK;
                     break;
             }
-            System.out.println("Updated string : " + contactEmail);
-
-            assert data_id != null;
-            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
-                    .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=? AND " + ContactsContract.Data._ID + "=?"
-                            , new String[]{contactID, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, data_id})
+            ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, contactEmail)
                     .withValue(ContactsContract.CommonDataKinds.Email.TYPE, emailType)
                     .build());
         }
 
         ops.add(ContentProviderOperation
-                .newUpdate(ContactsContract.Data.CONTENT_URI)
-                .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?"
-                        , new String[]{contactID, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE})
+                .newInsert(ContactsContract.Data.CONTENT_URI)
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, index)
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.Note.NOTE, note)
                 .build());
+
         try {
             getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
         } catch (Exception e) {

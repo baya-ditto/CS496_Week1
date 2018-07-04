@@ -22,15 +22,20 @@
 
     <Button
         android:id="@+id/delete_number"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_gravity="center_vertical"
-        android:background="@drawable/delete_circle"
-        android:minWidth="20dp"
-        android:text="-"
-        android:textColor="@color/white"
-        android:textSize="13dp"
-        android:textStyle="bold"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
 
-        />
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/ic_clear_black_24dp"
+        android:minWidth="20dp" />
+
+    <Button
+        android:id="@+id/recover_number"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+
+        android:background="@drawable/ic_my_restore_black_24dp"
+        android:minWidth="20dp" />
+
 </LinearLayout>

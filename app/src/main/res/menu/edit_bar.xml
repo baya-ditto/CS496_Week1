@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/cancle_edit"
+        android:orderInCategory="1"
+        android:title="취소"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/save_edit"
+        android:orderInCategory="10"
+        android:title="확인"
+        app:showAsAction="always" />
+</menu>

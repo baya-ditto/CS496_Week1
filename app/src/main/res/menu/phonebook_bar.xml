@@ -7,15 +7,23 @@
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_add" />
     <item
-        android:id="@+id/add_item"
-        android:orderInCategory="10"
-        android:title="@string/add_item"
-        android:showAsAction="ifRoom"
-        android:icon="@drawable/ic_add" />
-    <item
         android:id="@+id/delete_item"
         android:orderInCategory="10"
         android:title="@string/add_item"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_add" />
+
+    <item
+        android:id="@+id/add_item"
+        android:orderInCategory="10"
+        android:title="@string/add_item"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add" />
+
+    <item
+        android:id="@+id/star_item"
+        android:orderInCategory="10"
+        android:title="star"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_star_border_yellow_24dp" />
 </menu>

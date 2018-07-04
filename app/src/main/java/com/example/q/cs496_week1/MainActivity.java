@@ -10,36 +10,21 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.Pair;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,21 +58,20 @@ public class MainActivity extends AppCompatActivity {
         if (redirect_flag)
             return;
 
-
         Intent intent = new Intent(getApplicationContext(),MyService.class);
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
 
-//        boolean isServiceRunning = false;
-//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//            if ("com.example.q.cs496_week1.MyService".equals(service.service.getClassName())) {
-//                isServiceRunning = true;
-//                break;
-//            }
-//        }
-//        if(!isServiceRunning){
-//            Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
-//            startService(intent);
-//        }
+        boolean isServiceRunning = false;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.example.q.cs496_week1.MyService".equals(service.service.getClassName())) {
+                isServiceRunning = true;
+                break;
+            }
+        }
+        if(!isServiceRunning){
+            Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
+            startService(intent);
+        }
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -168,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<Pair<String, String>> phone_numbers = new ArrayList<>();
                     ArrayList<Triplet<String, String, String>> emails = new ArrayList<>();
                     String note = "";
+                    String starred = "";
 
                     if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                         System.out.println("name : " + name + ", ID : " + id);
@@ -222,8 +207,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                         noteCur.close();
 
+                        // get starred info
+
+                        Cursor starCur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + " =?", new String[]{id}, null);
+                        if (starCur.moveToFirst()) {
+                            starred = starCur.getString(starCur.getColumnIndex(ContactsContract.Contacts.STARRED));
+                            System.out.println("Starred " + starred);
+                        }
+
                         try {
-                            contactList.addContact(id, name, phone_numbers, emails, note);
+                            contactList.addContact(id, name, phone_numbers, emails, note, starred);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -237,11 +230,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ContactList result) {
             super.onPostExecute(result);
 
-            if (!redirect_flag) {
-                contactList.sorting();
-                if (result != null) {
-                    loadFragment(new PhonebookFragment());
-                }
+            contactList.sorting(false);
+            contactList.sorting(true);
+            if (!redirect_flag && result != null) {
+                loadFragment(new PhonebookFragment());
             }
 
             if (pDialog.isShowing())

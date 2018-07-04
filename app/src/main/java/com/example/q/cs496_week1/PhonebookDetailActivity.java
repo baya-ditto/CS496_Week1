@@ -61,14 +61,17 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         if (index == -1){
             contactid = intent.getStringExtra("contactid");
             if (contactid == null) {
-                Toast.makeText(getApplicationContext(), "Wrong argument, go back...", Toast.LENGTH_SHORT);
-                SystemClock.sleep(1000);
+                Toast.makeText(getApplicationContext(), "Wrong argument, go back...", Toast.LENGTH_LONG).show();
                 finish();
             }
             else
                 contacts = MainActivity.contactList.getJSONObjectByContactId(contactid);
         } else {
-            contacts = MainActivity.contactList.getJSONObjectByIndex(index);
+            int listNum = intent.getIntExtra(PhonebookFragment.list_tag, -1);
+            if (listNum == PhonebookFragment.normalListNum)
+                contacts = MainActivity.contactList.getJSONObjectByIndex(index);
+            else if (listNum == PhonebookFragment.starredListNum)
+                contacts = MainActivity.contactList.getJSONObjectByIndex_starred(index);
         }
 
 
@@ -89,7 +92,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         for (int i = 0; i < numbers.length(); ++i) {
             JSONObject number_info = numbers.optJSONObject(i);
             String number = number_info.optString("number");
-            EditText text_view = new EditText(this);
+            TextView text_view = new TextView(this);
 
             LinearLayout.LayoutParams params =
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -99,12 +102,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
             text_view.setLayoutParams(params);
             text_view.setText(number);
             text_view.setSingleLine(true);
-            text_view.setBackgroundResource(R.color.transparent);
             text_view.setTextColor(getResources().getColor(R.color.basic));
-            text_view.setEnabled(false);
-            text_view.setInputType(InputType.TYPE_CLASS_PHONE);
-            //text_view.setInputType(InputType.TYPE_NULL);
-
 
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,1);
             params.setMargins(0,10,0,10);
@@ -127,7 +125,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
             JSONObject email_info = email_infos.optJSONObject(i);
 
             String email = email_info.optString("email");
-            EditText email_text_view = info_layout.findViewById(R.id.email);
+            TextView email_text_view = info_layout.findViewById(R.id.email);
             email_text_view.setText(email);
             String type = email_info.optString("type");
 
@@ -155,8 +153,8 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         }
 
         // show note info
-        String note = contacts.optString("notes");
-        EditText note_text_view = findViewById(R.id.note);
+        String note = contacts.optString("note");
+        TextView note_text_view = findViewById(R.id.note);
         note_text_view.setText(note);
     }
 
@@ -171,6 +169,13 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         MenuItem delete = menu.add(Menu.NONE, R.id.delete_item, 50, R.string.delete_item);
         delete.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         delete.setIcon(R.drawable.ic_delete);
+
+        MenuItem star = menu.add(Menu.NONE, R.id.star_item, 0, "STAR");
+        star.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        if (contacts.optString("starred", "0").equals("1"))
+            star.setIcon(R.drawable.ic_star_yellow_24dp);
+        else
+            star.setIcon(R.drawable.ic_star_border_yellow_24dp);
         return true;
     }
     @Override
@@ -181,12 +186,11 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 return true;
             case R.id.edit_item:
                 Intent intent = new Intent(PhonebookDetailActivity.this, PhonebookEditActivity.class);
-                intent.putExtra(PhonebookEditActivity.ModeMsg, PhonebookEditActivity.EDIT_MODE);
                 intent.putExtra("contactid", contacts.optString("contactid"));
                 startActivity(intent);
+                //Toast.makeText(getApplicationContext(), "DEBUG", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.delete_item:
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("삭제");
                 builder.setMessage("정말로 삭제하시겠습니까?");
@@ -195,7 +199,6 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Toast.makeText(getApplicationContext(), "okay", Toast.LENGTH_LONG).show();
-                                //TODO: delete & update contact
                                 deleteContact();
                                 onBackPressed();
                             }
@@ -208,6 +211,44 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                             }
                         });
                 builder.show();
+                return true;
+            case R.id.star_item:
+                String new_starred;
+                if (contacts.optString("starred", "0").equals("1")){
+                    new_starred = "0";
+                }
+                else {
+                    new_starred = "1";
+                }
+
+                ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+                ops.add(ContentProviderOperation
+                        .newUpdate(ContactsContract.Contacts.CONTENT_URI)
+                        .withSelection(ContactsContract.Contacts._ID + "=?",
+                                new String[]{contacts.optString("contactid", null)})
+                        .withValue(ContactsContract.Contacts.STARRED, new_starred)
+                        .build());
+                try {
+                    getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    contacts.put("starred", new_starred);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                MenuItem star = item;
+                if (new_starred.equals("0"))  {
+                    star.setIcon(R.drawable.ic_star_border_yellow_24dp);
+                } else if (new_starred.equals("1"))
+                    star.setIcon(R.drawable.ic_star_yellow_24dp);
+                else
+                    Log.d("Star test", "something goes wrong");
+
+                Toast.makeText(getApplicationContext(), "DEBUG3", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

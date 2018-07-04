@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+
 }

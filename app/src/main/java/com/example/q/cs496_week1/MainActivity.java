@@ -31,8 +31,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.q.cs496_week1.googleMaps.GoogleService;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        if(!hasPermissions(this,PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this,PERMISSIONS, 1);
+        }
+
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -72,14 +74,9 @@ public class MainActivity extends AppCompatActivity {
         if (redirect_flag)
             return;
 
-
-        if(!hasPermissions(this,PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this,PERMISSIONS, 1);
-        }
-
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(getApplicationContext(),MyService.class);
+        /*Intent intent = new Intent(getApplicationContext(),MyService.class);
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
         boolean isServiceRunning = false;
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -91,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if(!isServiceRunning){
             Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
             startService(intent);
-        }
+        }*/
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -172,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<Pair<String, String>> phone_numbers = new ArrayList<>();
                     ArrayList<Triplet<String, String, String>> emails = new ArrayList<>();
                     String note = "";
+                    String starred = "";
 
                     if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                         System.out.println("name : " + name + ", ID : " + id);
@@ -226,8 +224,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                         noteCur.close();
 
+                        // get starred info
+
+                        Cursor starCur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + " =?", new String[]{id}, null);
+                        if (starCur.moveToFirst()) {
+                            starred = starCur.getString(starCur.getColumnIndex(ContactsContract.Contacts.STARRED));
+                            System.out.println("Starred " + starred);
+                        }
+
                         try {
-                            contactList.addContact(id, name, phone_numbers, emails, note);
+                            contactList.addContact(id, name, phone_numbers, emails, note, starred);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -241,11 +247,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ContactList result) {
             super.onPostExecute(result);
 
-            if (!redirect_flag) {
-                contactList.sorting();
-                if (result != null) {
-                    loadFragment(new PhonebookFragment());
-                }
+            contactList.sorting(false);
+            contactList.sorting(true);
+            if (!redirect_flag && result != null) {
+                loadFragment(new PhonebookFragment());
             }
 
             if (pDialog.isShowing())

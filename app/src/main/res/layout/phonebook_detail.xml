@@ -73,15 +73,6 @@
                 android:orientation="vertical">
             </LinearLayout>
 
-            <Button
-                android:id="@+id/add_number_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="+"
-                android:textSize="0dp"
-                android:visibility="invisible" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,28 +88,18 @@
                 android:layout_marginTop="8dp">
             </LinearLayout>
 
-            <Button
-                android:id="@+id/add_email_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="+"
-                android:textSize="0dp"
-                android:visibility="invisible" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="15dp"
                 android:text="메모" />
-            <EditText
+            <TextView
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:textColor="@color/basic"
-                android:background="@android:color/transparent"/>
+                android:layout_marginTop="8dp"
+                android:textColor="@color/basic" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"

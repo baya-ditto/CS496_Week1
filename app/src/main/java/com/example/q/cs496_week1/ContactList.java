@@ -1,5 +1,6 @@
 package com.example.q.cs496_week1;
 
+import android.support.v7.util.SortedList;
 import android.util.Pair;
 
 import org.json.JSONArray;
@@ -14,17 +15,21 @@ import java.util.List;
 public class ContactList {
 
     JSONArray contactJSON;
+    JSONArray contactJSON_starred;
+    ArrayList<String> starredNames = new ArrayList<>();
 
     public ContactList() {
         contactJSON = new JSONArray();
+        contactJSON_starred = new JSONArray();
     }
 
-    public void addContact(String contactId, String contactName, ArrayList<Pair<String, String>> contactNumbers, ArrayList<Triplet<String, String, String>> contactEmails, String contactNote) throws JSONException {
+    public void addContact(String contactId, String contactName, ArrayList<Pair<String, String>> contactNumbers, ArrayList<Triplet<String, String, String>> contactEmails, String contactNote, String starred) throws JSONException {
         JSONObject contact = new JSONObject();
 
         contact.put("contactid", contactId);
         contact.put("name", contactName);
         contact.put("note", contactNote);
+        contact.put("starred", starred);
 
         JSONArray number_infos = new JSONArray();
         for (Pair<String, String> pair : contactNumbers){
@@ -54,14 +59,19 @@ public class ContactList {
         contact.put("emails",email_infos);
 
         contactJSON.put(contact);
+        if (starred.equals("1")) {
+            contactJSON_starred.put(contact);
+            starredNames.add(contactName);
+        }
     }
 
-    public void sorting()  {
+    public void sorting(boolean starred)  {
         JSONArray sortedJsonArray = new JSONArray();
         List<JSONObject> jsonList = new ArrayList<JSONObject>();
-        for (int i = 0; i < contactJSON.length(); i++) {
+        JSONArray target_JSON = (starred) ? contactJSON_starred : contactJSON;
+        for (int i = 0; i < target_JSON.length(); i++) {
             try {
-                jsonList.add(contactJSON.getJSONObject(i));
+                jsonList.add(target_JSON.getJSONObject(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -82,10 +92,13 @@ public class ContactList {
                 return valA.compareTo(valB);
             }
         });
-        for (int i = 0; i < contactJSON.length(); i++) {
+        for (int i = 0; i < target_JSON.length(); i++) {
             sortedJsonArray.put(jsonList.get(i));
         }
-        contactJSON = sortedJsonArray;
+        if (starred)
+            contactJSON_starred = sortedJsonArray;
+        else
+            contactJSON = sortedJsonArray;
     }
 
 
@@ -101,6 +114,17 @@ public class ContactList {
         return names;
     }
 
+    public ArrayList<String> getStarredNameArray(boolean sorted) {
+        if (sorted) {
+            Collections.sort( starredNames, new Comparator<String>() {
+                public int compare(String a, String b) {
+                    return a.compareTo(b);
+                }
+            });
+        }
+        return starredNames;
+    }
+
     public int getLength() {
         return contactJSON.length();
     }
@@ -114,6 +138,17 @@ public class ContactList {
         }
         return contact;
     }
+
+    public JSONObject getJSONObjectByIndex_starred(int index) {
+        JSONObject contact = null;
+        try {
+            contact = (JSONObject) contactJSON_starred.get(index);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return contact;
+    }
+
 
     public JSONObject getJSONObjectByContactId(String contactid){
         JSONObject target = null;

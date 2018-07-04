@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/email_info"
+    android:id="@+id/number_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="40dp"
@@ -10,24 +10,18 @@
     android:orientation="horizontal">
 
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
         android:singleLine="true"
-        android:inputType="textEmailAddress"
+        android:inputType="phone"
+        android:maxLength="20"
         android:textColor="@color/basic"
-        android:hint="example@gmail.com"/>
+        android:hint="(010) 1234-5678"/>
 
     <Button
-        android:id="@+id/type"
-        android:layout_width="68dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1"
-        android:gravity="center" />
-
-    <Button
-        android:id="@+id/delete_email"
+        android:id="@+id/delete_number"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_gravity="center_vertical"
@@ -36,5 +30,7 @@
         android:text="-"
         android:textColor="@color/white"
         android:textSize="13dp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+
+        />
 </LinearLayout>

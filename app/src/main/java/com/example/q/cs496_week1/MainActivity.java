@@ -35,17 +35,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    /*
-        MainActivity.json_db =
-	        [
-	            {"name":"test seo",
-	            "numbers":["(010) 496-496"],
-	            "emails":[{"email":"asdf@asdf.com","type":"1"},
-	            {"email":"asdf@work.com","type":"2"}],
-	            "note":"it's note"}
-	        ]
-     */
+
+    public final static String redirectTag = "redirect";
+    public final static String contactidTag = "contactid";
+    public final static int _phonebook_detail = 1;
+
     public static ContactList contactList;
+    private boolean redirect_flag = false;
+    private String redirect_contactid = null;
 
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
@@ -56,8 +53,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getIntExtra(redirectTag, -1) == _phonebook_detail) {
+            redirect_flag = true;
+            redirect_contactid = getIntent().getStringExtra(contactidTag);
+        }
+
+        if (redirect_flag)
+            return;
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -135,8 +139,8 @@ public class MainActivity extends AppCompatActivity {
                 while (cur.moveToNext()) {
                     String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                     String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    ArrayList<String> phone_numbers = new ArrayList<String>();
-                    ArrayList<Pair<String, String>> emails = new ArrayList<Pair<String, String>>();
+                    ArrayList<Pair<String, String>> phone_numbers = new ArrayList<>();
+                    ArrayList<Triplet<String, String, String>> emails = new ArrayList<>();
                     String note = "";
 
                     if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
@@ -149,8 +153,10 @@ public class MainActivity extends AppCompatActivity {
                         while (pCur.moveToNext()) {
                             String phone = pCur.getString(
                                     pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            String data_id = pCur.getString(
+                                    pCur.getColumnIndex(ContactsContract.Data._ID));
                             System.out.println("phone" + phone);
-                            phone_numbers.add(phone);
+                            phone_numbers.add(new Pair<String, String>(phone, data_id));
                         }
                         pCur.close();
 
@@ -168,10 +174,13 @@ public class MainActivity extends AppCompatActivity {
                                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                             String emailType = emailCur.getString(
                                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+                            String data_id = emailCur.getString(
+                                    emailCur.getColumnIndex(ContactsContract.Data._ID)
+                            );
 
-                            System.out.println("Email " + email + " Email Type : " + emailType);
+                            System.out.println("Email " + email + " Email Type : " + emailType + " data_id : " + data_id);
 
-                            emails.add(new Pair<String, String>(email, emailType));
+                            emails.add(new Triplet<String, String, String>(email, emailType, data_id));
                         }
                         emailCur.close();
 
@@ -202,12 +211,22 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ContactList result) {
             super.onPostExecute(result);
 
-            contactList.sorting();
-            if (result != null) {
-                loadFragment(new PhonebookFragment());
+            if (!redirect_flag) {
+                contactList.sorting();
+                if (result != null) {
+                    loadFragment(new PhonebookFragment());
+                }
             }
+
             if (pDialog.isShowing())
                 pDialog.dismiss();
+
+            if (redirect_flag){
+                Intent intent = new Intent(MainActivity.this, PhonebookDetailActivity.class);
+                intent.putExtra("contactid", redirect_contactid);
+                redirect_flag = false;
+                startActivity(intent);
+            }
         }
 
     }
@@ -217,6 +236,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         contactList = new ContactList();
         locationAndContactsTask(this);
+
 
     }
 }

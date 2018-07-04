@@ -19,26 +19,40 @@ public class ContactList {
         contactJSON = new JSONArray();
     }
 
-    public void addContact(String contactId, String contactName, ArrayList<String> contactNumbers, ArrayList<Pair<String, String>> contactEmails, String contactNote) throws JSONException {
+    public void addContact(String contactId, String contactName, ArrayList<Pair<String, String>> contactNumbers, ArrayList<Triplet<String, String, String>> contactEmails, String contactNote) throws JSONException {
         JSONObject contact = new JSONObject();
 
-        contact.put("id", contactId);
+        contact.put("contactid", contactId);
         contact.put("name", contactName);
-        contact.put("numbers", new JSONArray(contactNumbers));
         contact.put("note", contactNote);
 
+        JSONArray number_infos = new JSONArray();
+        for (Pair<String, String> pair : contactNumbers){
+            JSONObject number_info = new JSONObject();
+            try {
+                number_info.put("number", pair.first);
+                number_info.put("id", pair.second);
+                number_infos.put(number_info);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        contact.put("numbers", number_infos);
+
         JSONArray email_infos = new JSONArray();
-        for (Pair<String, String> pair : contactEmails) {
+        for (Triplet<String, String, String> trip : contactEmails) {
             JSONObject email_info = new JSONObject();
             try {
-                email_info.put("email", pair.first);
-                email_info.put("type", pair.second);
+                email_info.put("email", trip.first);
+                email_info.put("type", trip.second);
+                email_info.put("id", trip.third);
                 email_infos.put(email_info);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         contact.put("emails",email_infos);
+
         contactJSON.put(contact);
     }
 
@@ -91,14 +105,28 @@ public class ContactList {
         return contactJSON.length();
     }
 
-    public JSONObject getJSONObject(int index) {
-        JSONObject contact = new JSONObject();
+    public JSONObject getJSONObjectByIndex(int index) {
+        JSONObject contact = null;
         try {
             contact = (JSONObject) contactJSON.get(index);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return contact;
+    }
+
+    public JSONObject getJSONObjectByContactId(String contactid){
+        JSONObject target = null;
+        for (int i = 0; i < contactJSON.length(); ++i){
+            JSONObject contact = getJSONObjectByIndex(i);
+            if (contact == null)
+                continue;
+            if (contact.optString("contactid", "-1").equals(contactid)){
+                target = contact;
+                break;
+            }
+        }
+        return target;
     }
 
 }

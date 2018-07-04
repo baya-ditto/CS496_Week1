@@ -66,6 +66,9 @@ public class PhonebookFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
                 Toast.makeText(getActivity(),"ADD",Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getActivity(), PhonebookEditActivity.class);
+                intent.putExtra(PhonebookEditActivity.ModeMsg, PhonebookEditActivity.CREATE_MODE);
+                startActivity(intent);
             }
         });
 

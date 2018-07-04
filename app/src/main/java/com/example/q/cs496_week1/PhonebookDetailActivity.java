@@ -9,6 +9,7 @@ import android.content.OperationApplicationException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -52,11 +54,27 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        contacts = MainActivity.contactList.getJSONObject(getIntent().getIntExtra("index",0));
-        String name = contacts.optString("name");
+        // choose appropriate contact, based on the given index or contactid
+        Intent intent = getIntent();
+        int index = intent.getIntExtra("index", -1);
+        String contactid = null;
+        if (index == -1){
+            contactid = intent.getStringExtra("contactid");
+            if (contactid == null) {
+                Toast.makeText(getApplicationContext(), "Wrong argument, go back...", Toast.LENGTH_SHORT);
+                SystemClock.sleep(1000);
+                finish();
+            }
+            else
+                contacts = MainActivity.contactList.getJSONObjectByContactId(contactid);
+        } else {
+            contacts = MainActivity.contactList.getJSONObjectByIndex(index);
+        }
+
+
+        String name = (contacts != null) ? contacts.optString("name") : "";
 
         getSupportActionBar().setTitle(name);
-
         CollapsingToolbarLayout ctl = (CollapsingToolbarLayout) findViewById(R.id.main_collapsing);
 
 
@@ -69,7 +87,8 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         JSONArray numbers = contacts.optJSONArray("numbers");
 
         for (int i = 0; i < numbers.length(); ++i) {
-            String number = numbers.optString(i);
+            JSONObject number_info = numbers.optJSONObject(i);
+            String number = number_info.optString("number");
             EditText text_view = new EditText(this);
 
             LinearLayout.LayoutParams params =
@@ -162,9 +181,9 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.edit_item:
-                //switch_to_edit_layout();
                 Intent intent = new Intent(PhonebookDetailActivity.this, PhonebookEditActivity.class);
                 intent.putExtra(PhonebookEditActivity.ModeMsg, PhonebookEditActivity.EDIT_MODE);
+                intent.putExtra("contactid", contacts.optString("contactid"));
                 startActivity(intent);
                 return true;
             case R.id.delete_item:
@@ -196,51 +215,10 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void switch_to_edit_layout() {
-        // make EditText modifiable
-
-        LinearLayout numbers_layout = findViewById(R.id.numbers_layout);
-        for (int i = 0; i < numbers_layout.getChildCount(); ++i) {
-            View v = numbers_layout.getChildAt(i);
-            if (v instanceof EditText) {
-                //((EditText) v).setInputType(InputType.TYPE_CLASS_PHONE);
-                ((EditText) v).setEnabled(true);
-            }
-        }
-
-        LinearLayout emails_layout = findViewById(R.id.emails_layout);
-        for (int i = 0; i < emails_layout.getChildCount(); ++i) {
-            View lv = emails_layout.getChildAt(i);
-            if (lv instanceof LinearLayout){
-                EditText et = (EditText) ((LinearLayout) lv).getChildAt(0);
-                et.setEnabled(true);
-            }
-        }
-
-        EditText note = findViewById(R.id.note);
-        note.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        // show button which was hidden
-        // TODO: set button_click_listener
-
-        Button add_number_button = findViewById(R.id.add_number_button);
-        add_number_button.setTextSize(15);
-        add_number_button.setVisibility(View.VISIBLE);
-
-        Button add_email_button = findViewById(R.id.add_email_button);
-        add_email_button.setTextSize(15);
-        add_email_button.setVisibility(View.VISIBLE);
-
-        // TODO: complete button / redo button / ask user to (save | don't save | cancel)  when user go out
-
-        // TODO: apply to device
-
-    }
-
     private void deleteContact() {
         ContentResolver contactHelper = getApplicationContext().getContentResolver();
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
-        String[] args = new String[]{contacts.optString("id")};
+        String[] args = new String[]{contacts.optString("contactid")};
         ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
                 .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=?", args).build());
         try{

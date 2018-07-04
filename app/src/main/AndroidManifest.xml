@@ -8,7 +8,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <meta-data android:name="com.kakao.sdk.AppKey" android:value="XXXXXXXXXXXXXXXXXXXXXXXXXXXX"/>
+    <meta-data
+        android:name="com.kakao.sdk.AppKey"
+        android:value="XXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".PhonebookDetailActivity" />
-        <activity android:name=".PhonebookEditActivity"></activity>
+        <activity android:name=".PhonebookEditActivity" />
+        <activity android:name=".EditTextPhoneNumberActivity"></activity>
     </application>
 
 </manifest>

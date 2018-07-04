@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -35,8 +34,7 @@
         </activity>
         <activity
             android:name=".PhonebookDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".PhonebookEditActivity" />
         <activity android:name=".CalenderActivity" />
         <!--
@@ -63,7 +61,10 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".PhonebookAddActivity"></activity>
+        <activity android:name=".PhonebookAddActivity" />
+        <activity
+            android:name=".MapLogActivity"
+            android:label="@string/title_activity_map_log"></activity>
     </application>
 
 </manifest>

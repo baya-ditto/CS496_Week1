@@ -1,6 +1,7 @@
 package com.example.q.cs496_week1;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.joda.time.DateTimeComparator;
 
@@ -55,20 +58,27 @@ public class option3Fragment extends Fragment {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
-                todayCourse = getTodayData();
-                for(int i=0;i<todayCourse.size();i++){
-                    MarkerOptions makerOptions = new MarkerOptions();
-                    makerOptions
-                            .position(todayCourse.get(i))
-                            .title("마커"); // 타이틀.
-                    // 2. 마커 생성 (마커를 나타냄)
-                    mMap.addMarker(makerOptions);
-                }
                 googleMap = mMap;
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(todayCourse.get(todayCourse.size()-1)).zoom(18).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                // For showing a move to my location button
-                // For zooming automatically to the location of the marker
+
+                Date today = new Date();
+                today.setHours(0); today.setMinutes(0); today.setSeconds(0);
+                todayCourse = Helper.getLatLngList(today, new Date());
+
+                PolylineOptions options = new PolylineOptions();
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
+                for(int i=0;i<todayCourse.size();i++){
+                    LatLng latlng = todayCourse.get(i);
+                    builder.include(latlng);
+                    options.add(latlng);
+                }
+                options.color(Color.RED);
+                options.width(3);
+                googleMap.addPolyline(options);
+
+                if(todayCourse.size() != 0) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),200));
+                }
             }
         });
 
@@ -113,38 +123,6 @@ public class option3Fragment extends Fragment {
         mMapView.onLowMemory();
     }
 
-    private ArrayList<LatLng> getTodayData() {
-
-        ArrayList<LatLng> ret = new ArrayList<LatLng>();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(
-                    new FileReader(Helper.makeDirectoryAndFile(Helper.SAVEDIRPATH,Helper.SAVEFILEPATH)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        while(true) {
-            String line = null;
-            try {
-                line = br.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (line==null) break;
-            String[] data = line.split("\t");
-            DateTimeComparator dateTimeComparator = DateTimeComparator.getDateOnlyInstance();
-            Date date = new Date(Long.parseLong(data[0]));
-            if(dateTimeComparator.compare(date, new Date()) == 0) {
-                ret.add(new LatLng(parseDouble(data[1]), parseDouble(data[2])));
-            }
-        }
-        try {
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return ret;
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {

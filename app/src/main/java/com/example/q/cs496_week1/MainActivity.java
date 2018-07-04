@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -35,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     public static ContactList contactList;
     private boolean redirect_flag = false;
     private String redirect_contactid = null;
-
 
 
     private static String[] PERMISSIONS = {

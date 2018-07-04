@@ -32,7 +32,7 @@
                 />
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/main_toolbar"
+                android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -62,6 +62,7 @@
                 android:text="전화번호"
                 android:layout_gravity="left"
                 android:layout_marginTop="15dp"
+                android:textSize="20dp"
                 android:gravity="center"/>
 
             <LinearLayout
@@ -77,7 +78,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="15dp"
-                android:text="이메일" />
+                android:text="이메일"
+                android:textSize="20dp"/>
 
             <LinearLayout
                 android:id="@+id/emails_layout"
@@ -92,13 +94,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="15dp"
-                android:text="메모" />
+                android:text="메모"
+                android:textSize="20dp"/>
             <TextView
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="@color/basic" />
+                android:textColor="@color/basic"
+                android:textSize="18dp"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"

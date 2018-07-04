@@ -14,7 +14,11 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,18 +34,18 @@ public class PhonebookAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonebook_add);
 
-/*        Toolbar mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
-        setSupportActionBar(mToolbar);
+        /*Toolbar mToolbar = (Toolbar)findViewById(R.id.add_toolbar);
+        setSupportActionBar(mToolbar);*/
 
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Button save_but = findViewById(R.id.save_button);
-        Button cancel_but = findViewById(R.id.cancel_button);
+        /*Button save_but = findViewById(R.id.save_button);
+        Button cancel_but = findViewById(R.id.cancel_button);*/
         Button add_number_but = findViewById(R.id.add_number_button);
         Button add_email_but = findViewById(R.id.add_email_button);
 
-        save_but.setOnClickListener(new View.OnClickListener() {
+        /*save_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 save_interact();
@@ -69,7 +73,7 @@ public class PhonebookAddActivity extends AppCompatActivity {
                 });
                 finish();
             }
-        });
+        });*/
 
         add_number_but.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +90,45 @@ public class PhonebookAddActivity extends AppCompatActivity {
                 emails_layout.addView(get_email_info_layout(null, "개인"));
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        MenuItem save = menu.add(Menu.NONE, R.id.save_item, 50, "SAVE");
+        save.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        save.setIcon(R.drawable.ic_save_black_24dp);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookAddActivity.this);
+                builder.setTitle("정말 돌아가시겠습니까? 입력한 정보는 저장되지 않습니다.");
+                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                });
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            case R.id.save_item:
+                save_interact();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void save_interact() {
@@ -131,17 +174,29 @@ public class PhonebookAddActivity extends AppCompatActivity {
     }
     private LinearLayout get_number_info_layout(String number){
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.number_info_edit, null);
+        LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.number_info_add, null);
 
-        TextView number_text_view = info_layout.findViewById(R.id.number);
+        EditText number_text_view = info_layout.findViewById(R.id.number);
         if (number != null)
             number_text_view.setText(number);
 
         Button delete_number_button = info_layout.findViewById(R.id.delete_number);
+        delete_number_button.setTag(info_layout);
         delete_number_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                //TODO: delete entry
+                View info_layout = (View) v.getTag();
+                ((ViewGroup) info_layout.getParent()).removeView(info_layout);
+            }
+        });
 
+        Button clear_number_button = info_layout.findViewById(R.id.clear_number);
+        clear_number_button.setTag(number_text_view);
+        clear_number_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                ((EditText) v.getTag()).setText("");
             }
         });
         return info_layout;
@@ -149,7 +204,7 @@ public class PhonebookAddActivity extends AppCompatActivity {
 
     private LinearLayout get_email_info_layout(String email, String type){
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_edit, null);
+        LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_add, null);
 
         EditText email_text_view = info_layout.findViewById(R.id.email);
         if (email != null)
@@ -169,10 +224,22 @@ public class PhonebookAddActivity extends AppCompatActivity {
         }
 
         Button delete_email_button = info_layout.findViewById(R.id.delete_email);
+        delete_email_button.setTag(info_layout);
         delete_email_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: delete entry
+                View info_layout = (View) v.getTag();
+                ((ViewGroup) info_layout.getParent()).removeView(info_layout);
+            }
+        });
 
+        Button clear_email_button = info_layout.findViewById(R.id.clear_email);
+        clear_email_button.setTag(email_text_view);
+        clear_email_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((EditText) v.getTag()).setText("");
             }
         });
         return info_layout;

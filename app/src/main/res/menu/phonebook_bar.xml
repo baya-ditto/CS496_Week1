@@ -26,4 +26,11 @@
         android:title="star"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_star_border_yellow_24dp" />
+
+    <item
+        android:id="@+id/save_item"
+        android:orderInCategory="10"
+        android:title="save"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_save_black_24dp" />
 </menu>

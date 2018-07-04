@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,7 +49,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phonebook_detail);
 
-        Toolbar mToolbar = (Toolbar)findViewById(R.id.main_toolbar);
+        Toolbar mToolbar = (Toolbar)findViewById(R.id.detail_toolbar);
         setSupportActionBar(mToolbar);
 
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -103,6 +104,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
             text_view.setText(number);
             text_view.setSingleLine(true);
             text_view.setTextColor(getResources().getColor(R.color.basic));
+            text_view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
 
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,1);
             params.setMargins(0,10,0,10);

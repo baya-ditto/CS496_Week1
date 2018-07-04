@@ -37,7 +37,8 @@
             android:name=".PhonebookDetailActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-        <activity android:name=".PhonebookEditActivity" />
+        <activity android:name=".PhonebookEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".CalenderActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

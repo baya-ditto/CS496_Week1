@@ -10,11 +10,13 @@
 
     <TextView
         android:id="@+id/email"
-        android:layout_width="wrap_content"
+        android:layout_width="225dp"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
         android:singleLine="true"
         android:inputType="textEmailAddress"
+        android:textSize="18dp"
+        android:maxLength="40"
         android:textColor="@color/basic" />
 
     <TextView
@@ -22,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.2"
+        android:textSize="15dp"
         android:gravity="center"/>
 </LinearLayout>
 

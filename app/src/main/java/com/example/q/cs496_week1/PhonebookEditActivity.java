@@ -139,17 +139,31 @@ public class PhonebookEditActivity extends AppCompatActivity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.number_info_edit, null);
 
-        TextView number_text_view = info_layout.findViewById(R.id.number);
-        if (number != null)
+        EditText number_text_view = info_layout.findViewById(R.id.number);
+        if (number != null) {
             number_text_view.setText(number);
+            number_text_view.setTag(number);
+        }
         if (data_id != null)
             number_text_view.setTag(data_id);
 
-        Button delete_number_button = info_layout.findViewById(R.id.delete_number);
-        delete_number_button.setOnClickListener(new View.OnClickListener(){
+        Button clear_number_button = info_layout.findViewById(R.id.clear_number);
+        clear_number_button.setTag(number_text_view);
+        clear_number_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                ((EditText) v.getTag()).setText("");
+            }
+        });
 
+        Button recover_number_button = info_layout.findViewById(R.id.recover_number);
+        recover_number_button.setTag(number_text_view);
+        recover_number_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                EditText number_tv = (EditText) v.getTag();
+                if (number_tv.getTag() != null)
+                    number_tv.setText((String) number_tv.getTag());
             }
         });
         return info_layout;
@@ -160,8 +174,10 @@ public class PhonebookEditActivity extends AppCompatActivity {
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_edit, null);
 
         EditText email_text_view = info_layout.findViewById(R.id.email);
-        if (email != null)
+        if (email != null) {
             email_text_view.setText(email);
+            email_text_view.setTag(email);
+        }
         if (data_id != null)
             email_text_view.setTag(data_id);
 
@@ -178,11 +194,23 @@ public class PhonebookEditActivity extends AppCompatActivity {
                 break;
         }
 
-        Button delete_email_button = info_layout.findViewById(R.id.delete_email);
-        delete_email_button.setOnClickListener(new View.OnClickListener() {
+        Button clear_email_button = info_layout.findViewById(R.id.clear_email);
+        clear_email_button.setTag(email_text_view);
+        clear_email_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((EditText) v.getTag()).setText("");
+            }
+        });
 
+        Button recover_email_button = info_layout.findViewById(R.id.recover_email);
+        recover_email_button.setTag(email_text_view);
+        recover_email_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText email_tv = (EditText) v.getTag();
+                if (email_tv.getTag() != null)
+                    email_tv.setText((String) email_tv.getTag());
             }
         });
         return info_layout;

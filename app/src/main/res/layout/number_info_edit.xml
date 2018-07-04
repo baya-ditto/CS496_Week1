@@ -11,30 +11,31 @@
 
     <EditText
         android:id="@+id/number"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_weight="0.8"
         android:singleLine="true"
         android:inputType="phone"
         android:maxLength="20"
         android:textColor="@color/basic"
+        android:textSize="18dp"
         android:hint="(010) 1234-5678"/>
 
     <Button
-        android:id="@+id/delete_number"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-
-        android:layout_gravity="center_vertical"
+        android:id="@+id/clear_number"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_weight="0.1"
+        android:layout_gravity="center_vertical|right"
         android:background="@drawable/ic_clear_black_24dp"
         android:minWidth="20dp" />
 
     <Button
         android:id="@+id/recover_number"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical"
-
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_weight="0.1"
+        android:layout_gravity="center_vertical|right"
         android:background="@drawable/ic_my_restore_black_24dp"
         android:minWidth="20dp" />
 

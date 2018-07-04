@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -39,6 +38,7 @@
             />
         <activity android:name=".PhonebookEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity android:name=".CalenderActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -55,16 +55,15 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".googleMaps.MapsActivity"
-            android:label="@string/title_activity_maps" />
-
         <service
             android:name=".MyService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".PhonebookAddActivity"></activity>
+        <activity android:name=".PhonebookAddActivity" />
+        <activity
+            android:name=".MapLogActivity"
+            android:label="@string/title_activity_map_log"></activity>
     </application>
 
 </manifest>

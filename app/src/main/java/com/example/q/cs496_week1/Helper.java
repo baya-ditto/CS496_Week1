@@ -2,8 +2,18 @@ package com.example.q.cs496_week1;
 
 import android.os.Environment;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import org.joda.time.DateTimeComparator;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static java.lang.Double.parseDouble;
 
 public class Helper {
 
@@ -33,4 +43,38 @@ public class Helper {
         }
         return file;
     }
+
+
+    public static ArrayList<LatLng> getLatLngList(Date start, Date end) {
+
+        ArrayList<LatLng> ret = new ArrayList<LatLng>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(
+                    new FileReader(Helper.makeDirectoryAndFile(Helper.SAVEDIRPATH,Helper.SAVEFILEPATH)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        while(true) {
+            String line = null;
+            try {
+                line = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (line==null) break;
+            String[] data = line.split("\t");
+            Date date = new Date(Long.parseLong(data[0]));
+            if(date.after(start) && date.before(end)) {
+                ret.add(new LatLng(parseDouble(data[1]), parseDouble(data[2])));
+            }
+        }
+        try {
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
 }

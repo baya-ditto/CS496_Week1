@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class CalenderActivity extends AppCompatActivity {
@@ -36,7 +37,7 @@ public class CalenderActivity extends AppCompatActivity {
         final Calendar lastYear = Calendar.getInstance();
         lastYear.add(Calendar.YEAR, -1);
         final Calendar nextYear = Calendar.getInstance();
-        calendar.init(lastYear.getTime(), nextYear.getTime()) //
+        calendar.init(lastYear.getTime(), nextYear.getTime())
                 .inMode(CalendarPickerView.SelectionMode.RANGE)
                 .withSelectedDate(new Date(System.currentTimeMillis()-24*60*60*1000));
     }
@@ -54,12 +55,19 @@ public class CalenderActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("Fragment","3");
-                startActivity(intent);
+                Intent intent1 = new Intent(this, MainActivity.class);
+                intent1.putExtra("Fragment","3");
+                startActivity(intent1);
                 return true;
             case R.id.edit_item:
-                Toast.makeText(this,"TODO!!",Toast.LENGTH_LONG).show();
+                List<Date> dates = calendar.getSelectedDates();
+                long[] pickedList = new long[dates.size()];
+                for(int i=0;i<dates.size();i++){
+                    pickedList[i] = dates.get(i).getTime();
+                }
+                Intent intent2 = new Intent(this,MapLogActivity.class);
+                intent2.putExtra("dates",pickedList);
+                startActivity(intent2);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -8,32 +8,6 @@
     tools:context=".PhonebookAddActivity"
     android:orientation="vertical">
 
-    <!--<RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/cancel_button"
-            android:layout_width="48dp"
-            android:layout_height="36dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="left"
-            android:text="취소"
-            android:textSize="15dp"
-            android:textColor="#ff6666"
-            android:background="@color/transparent"/>
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="48dp"
-            android:layout_height="36dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="right"
-            android:text="저장"
-            android:textSize="15dp"
-            android:textColor="#009999"
-            android:background="@color/transparent"/>
-    </RelativeLayout>-->
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"

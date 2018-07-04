@@ -3,4 +3,7 @@
     <string name="add_item">ADD</string>
     <string name="edit_item">ADD</string>
     <string name="delete_item">ADD</string>
+    <string name="str_done">ADD</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_maps_key">AIzaSyC6h2cgScDKxscybO9f4rkV-VeG0sDLUSs</string>
 </resources>

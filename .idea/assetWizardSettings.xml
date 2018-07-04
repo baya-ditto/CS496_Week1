@@ -19,8 +19,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\q\Downloads\outline_delete_white_18dp.png" />
-                                      <entry key="outputName" value="ic_delete" />
+                                      <entry key="imageAsset" value="C:\Users\q\Downloads\drawable-hdpi\pubtrans_ic_mylocation_on.png" />
+                                      <entry key="outputName" value="pubtrans_ic_mylocation_on" />
                                     </map>
                                   </option>
                                 </PersistentState>

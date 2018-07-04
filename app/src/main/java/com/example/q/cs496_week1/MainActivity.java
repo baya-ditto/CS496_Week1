@@ -2,14 +2,17 @@ package com.example.q.cs496_week1;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.RemoteControlClient;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -27,6 +30,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.q.cs496_week1.googleMaps.GoogleService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,12 +52,16 @@ public class MainActivity extends AppCompatActivity {
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_CONTACTS };
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         if (getIntent().getIntExtra(redirectTag, -1) == _phonebook_detail) {
@@ -62,6 +71,27 @@ public class MainActivity extends AppCompatActivity {
 
         if (redirect_flag)
             return;
+
+
+        if(!hasPermissions(this,PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this,PERMISSIONS, 1);
+        }
+
+        setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(getApplicationContext(),MyService.class);
+        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+        boolean isServiceRunning = false;
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("com.example.q.cs496_week1.MyService".equals(service.service.getClassName())) {
+                isServiceRunning = true;
+                break;
+            }
+        }
+        if(!isServiceRunning){
+            Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
+            startService(intent);
+        }
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {

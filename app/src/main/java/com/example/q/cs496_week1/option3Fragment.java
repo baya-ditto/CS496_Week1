@@ -1,17 +1,16 @@
 package com.example.q.cs496_week1;
 
-import android.content.Context;
-import android.location.Criteria;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,11 +19,23 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.joda.time.DateTimeComparator;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static java.lang.Double.parseDouble;
 
 public class option3Fragment extends Fragment {
 
     MapView mMapView;
     private GoogleMap googleMap;
+    private ArrayList<LatLng> todayCourse;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +43,7 @@ public class option3Fragment extends Fragment {
 
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mMapView.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mMapView.onResume(); // needed to get the map to display immediately
 
@@ -43,18 +55,19 @@ public class option3Fragment extends Fragment {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
+                todayCourse = getTodayData();
+                for(int i=0;i<todayCourse.size();i++){
+                    MarkerOptions makerOptions = new MarkerOptions();
+                    makerOptions
+                            .position(todayCourse.get(i))
+                            .title("마커"); // 타이틀.
+                    // 2. 마커 생성 (마커를 나타냄)
+                    mMap.addMarker(makerOptions);
+                }
                 googleMap = mMap;
-
-                final LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-                lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,100, 1, mLocationListener);
-                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1, mLocationListener);
-
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(
-                        new LatLng(new Location("myApp.service.receiver").getLatitude(),
-                                new Location("myApp.service.receiver").getLongitude())).zoom(12).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(todayCourse.get(todayCourse.size()-1)).zoom(18).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 // For showing a move to my location button
-                googleMap.setMyLocationEnabled(true);
                 // For zooming automatically to the location of the marker
             }
         });
@@ -64,28 +77,17 @@ public class option3Fragment extends Fragment {
 
     private final LocationListener mLocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-            //여기서 위치값이 갱신되면 이벤트가 발생한다.
-            //값은 Location 형태로 리턴되며 좌표 출력 방법은 다음과 같다.
-
-            double longitude = location.getLongitude(); //경도
-            double latitude = location.getLatitude();   //위도
-            Log.d("test", "onLocationChanged, location:" + longitude + " " + latitude);
         }
         public void onProviderDisabled(String provider) {
-            // Disabled시
-            Log.d("test", "onProviderDisabled, provider:" + provider);
         }
 
         public void onProviderEnabled(String provider) {
-            // Enabled시
-            Log.d("test", "onProviderEnabled, provider:" + provider);
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            // 변경시
-            Log.d("test", "onStatusChanged, provider:" + provider + ", status:" + status + " ,Bundle:" + extras);
         }
     };
+
 
     @Override
     public void onResume() {
@@ -111,4 +113,55 @@ public class option3Fragment extends Fragment {
         mMapView.onLowMemory();
     }
 
+    private ArrayList<LatLng> getTodayData() {
+
+        ArrayList<LatLng> ret = new ArrayList<LatLng>();
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(
+                    new FileReader(Helper.makeDirectoryAndFile(Helper.SAVEDIRPATH,Helper.SAVEFILEPATH)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        while(true) {
+            String line = null;
+            try {
+                line = br.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (line==null) break;
+            String[] data = line.split("\t");
+            DateTimeComparator dateTimeComparator = DateTimeComparator.getDateOnlyInstance();
+            Date date = new Date(Long.parseLong(data[0]));
+            if(dateTimeComparator.compare(date, new Date()) == 0) {
+                ret.add(new LatLng(parseDouble(data[1]), parseDouble(data[2])));
+            }
+        }
+        try {
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        MenuItem edit = menu.add(Menu.NONE, R.id.edit_item, 10, R.string.edit_item);
+        edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        edit.setIcon(R.drawable.ic_edit);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.edit_item:
+                Intent intent = new Intent(getActivity(),CalenderActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

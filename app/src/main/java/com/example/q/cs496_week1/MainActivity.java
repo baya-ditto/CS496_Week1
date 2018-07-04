@@ -7,12 +7,10 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.RemoteControlClient;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -20,24 +18,28 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.q.cs496_week1.googleMaps.GoogleService;
+import com.google.android.gms.maps.model.LatLng;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,49 +51,43 @@ public class MainActivity extends AppCompatActivity {
     private boolean redirect_flag = false;
     private String redirect_contactid = null;
 
+
+
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION};
+            Manifest.permission.ACCESS_FINE_LOCATION };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         if (getIntent().getIntExtra(redirectTag, -1) == _phonebook_detail) {
             redirect_flag = true;
             redirect_contactid = getIntent().getStringExtra(contactidTag);
         }
-
         if (redirect_flag)
             return;
 
 
-        if(!hasPermissions(this,PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this,PERMISSIONS, 1);
-        }
-
-        setContentView(R.layout.activity_main);
-
         Intent intent = new Intent(getApplicationContext(),MyService.class);
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
-        boolean isServiceRunning = false;
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("com.example.q.cs496_week1.MyService".equals(service.service.getClassName())) {
-                isServiceRunning = true;
-                break;
-            }
-        }
-        if(!isServiceRunning){
-            Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
-            startService(intent);
-        }
+
+//        boolean isServiceRunning = false;
+//        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+//            if ("com.example.q.cs496_week1.MyService".equals(service.service.getClassName())) {
+//                isServiceRunning = true;
+//                break;
+//            }
+//        }
+//        if(!isServiceRunning){
+//            Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
+//            startService(intent);
+//        }
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -143,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.container, fragment);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         transaction.addToBackStack(null);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     private class GetExternalData extends AsyncTask<String, String, ContactList> {
@@ -264,9 +260,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        String test = getIntent().getStringExtra("Fragment");
+        if(test != null){
+            loadFragment(new option3Fragment());
+            return;
+        }
         contactList = new ContactList();
         locationAndContactsTask(this);
-
-
     }
 }

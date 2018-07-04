@@ -1,10 +1,16 @@
 package com.example.q.cs496_week1;
 
+
 import android.os.Handler;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.util.Date;
 
 public class ServiceThread extends Thread{
     Handler handler;
     boolean isRun = true;
+
 
     public ServiceThread(Handler handler){
         this.handler = handler;
@@ -20,10 +26,8 @@ public class ServiceThread extends Thread{
         while(isRun){
             handler.sendEmptyMessage(0);
             try{
-                long now = System.currentTimeMillis();
                 Thread.sleep(60000);
             } catch(Exception e){}
         }
     }
-
 }

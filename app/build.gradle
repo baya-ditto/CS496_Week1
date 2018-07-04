@@ -35,4 +35,6 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
+    implementation 'joda-time:joda-time:2.9.9'
+    implementation 'com.savvi.datepicker:rangepicker:1.2.0'
 }

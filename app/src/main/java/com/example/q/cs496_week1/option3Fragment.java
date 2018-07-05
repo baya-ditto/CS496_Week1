@@ -185,7 +185,9 @@ public class option3Fragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable(){
                     public void run() {
                         int count = inclineInterval();
-                        while(count % (todayCourse.size() / 10) != 0)
+                        int de = todayCourse.size()/ 10;
+                        if (de == 0) de = 1;
+                        while(count % de != 0)
                             count = inclineInterval();
 
                         if(count > todayCourse.size() - 1){
@@ -262,7 +264,6 @@ public class option3Fragment extends Fragment {
             locationList = result.getLocations();
         }
 
-        Log.i("LATI", String.valueOf(locationList.size()));
         for(int i=0;i<locationList.size();i++){
             LocationObject location = locationList.get(i);
             double lat = location.getLatitude();

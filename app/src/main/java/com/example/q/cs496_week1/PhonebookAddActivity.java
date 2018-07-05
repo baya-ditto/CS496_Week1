@@ -34,11 +34,12 @@ public class PhonebookAddActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phonebook_add);
 
-        /*Toolbar mToolbar = (Toolbar)findViewById(R.id.add_toolbar);
-        setSupportActionBar(mToolbar);*/
-
+        Toolbar mToolbar = (Toolbar)findViewById(R.id.add_toolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("연락처 추가");
+
 
         /*Button save_but = findViewById(R.id.save_button);
         Button cancel_but = findViewById(R.id.cancel_button);*/

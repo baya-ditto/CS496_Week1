@@ -119,6 +119,14 @@ public class PhonebookDetailActivity extends AppCompatActivity {
         // show email infos
         LinearLayout emails_layout = findViewById(R.id.emails_layout);
         JSONArray email_infos = contacts.optJSONArray("emails");
+        if (email_infos.length() < 1) {
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,1);
+            params.setMargins(0,10,0,10);
+            View line_view = new View(this);
+            line_view.setLayoutParams(params);
+            line_view.setBackgroundResource(R.color.white_gray);
+            emails_layout.addView(line_view);
+        }
         for (int i = 0; i < email_infos.length(); ++i)
         {
             LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

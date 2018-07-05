@@ -4,33 +4,38 @@
         android:id="@+id/edit_item"
         android:orderInCategory="10"
         android:title="@string/add_item"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_add" />
     <item
         android:id="@+id/delete_item"
         android:orderInCategory="10"
         android:title="@string/add_item"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_add" />
 
     <item
         android:id="@+id/add_item"
         android:orderInCategory="10"
         android:title="@string/add_item"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_add" />
 
     <item
         android:id="@+id/star_item"
         android:orderInCategory="10"
         android:title="star"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_star_border_yellow_24dp" />
 
     <item
         android:id="@+id/save_item"
         android:orderInCategory="10"
         android:title="save"
-        android:showAsAction="ifRoom"
         android:icon="@drawable/ic_save_black_24dp" />
+
+    <item
+        android:id="@+id/select_item"
+        android:orderInCategory="10"
+        android:title="선택" />
+
+    <item
+        android:id="@+id/cancel_item"
+        android:orderInCategory="10"
+        android:title="취소" />
 </menu>

@@ -126,19 +126,25 @@ public class MyService extends Service implements LocationListener {
         if (!isGPSEnable && !isNetworkEnable) {
 
         } else {
-            if (isNetworkEnable || isGPSEnable) {
-                location = null;
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+            location = null;
+            if (locationManager != null) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
-                if(locationManager != null) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null) {
+                    Log.d("GPS TEST", "GPS not worked, get location by network");
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+
+                if(location != null) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
-
-                    if(location != null) {
-                        Log.d("latitude", latitude+ "");
-                        Log.d("longitude", longitude+ "");
-                    }
+                    Log.d("latitude", latitude+ "");
+                    Log.d("longitude", longitude+ "");
+                }
+                else {
+                    Log.d("GPS TEST", "Both GPS method did not work");
                 }
             }
         }

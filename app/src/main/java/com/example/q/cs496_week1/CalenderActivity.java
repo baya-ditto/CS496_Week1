@@ -46,9 +46,10 @@ public class CalenderActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent1 = new Intent(this, MainActivity.class);
+                /*Intent intent1 = new Intent(this, MainActivity.class);
                 intent1.putExtra("Fragment","3");
-                startActivity(intent1);
+                startActivity(intent1);*/
+                finish();
                 return true;
             case R.id.edit_item:
                 List<Date> dates = calendar.getSelectedDates();

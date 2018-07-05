@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         if (redirect_flag)
             return;
 
-        /*Intent intent = new Intent(getApplicationContext(),MyService.class);
+        Intent intent = new Intent(getApplicationContext(),MyService.class);
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
 
         boolean isServiceRunning = false;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
             startService(intent);
         }
-*/
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -263,5 +263,15 @@ public class MainActivity extends AppCompatActivity {
         }
         contactList = new ContactList();
         locationAndContactsTask(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == option3Fragment.GOBACK_TO_FRAG3) {
+            if (resultCode == RESULT_OK) {
+                loadFragment(new option3Fragment());
+                return;
+            }
+        }
     }
 }

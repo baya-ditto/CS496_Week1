@@ -16,7 +16,8 @@
         android:layout_marginLeft="72dp"
         android:textSize="18sp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"/>
     <CheckBox
         android:id="@+id/contact_select"
         android:layout_width="30dp"

@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -126,6 +127,7 @@ public class option3Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#808080\">" + "발자취" + "</font>"));
         mMapView.onResume();
     }
 
@@ -150,24 +152,24 @@ public class option3Fragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        MenuItem edit = menu.add(Menu.NONE, R.id.edit_item, 10, R.string.edit_item);
+        MenuItem edit = menu.add(Menu.NONE, R.id.calendar_item, 20, "달력");
         edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        edit.setIcon(R.drawable.ic_edit);
+        edit.setIcon(R.drawable.ic_calendar_black_24dp);
 
-        MenuItem delete = menu.add(Menu.NONE, R.id.delete_item, 20, R.string.edit_item);
-        edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        edit.setIcon(R.drawable.ic_edit);
+        MenuItem play = menu.add(Menu.NONE, R.id.play_item, 10, "기록 재생");
+        play.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        play.setIcon(R.drawable.ic_play_arrow_black_24dp);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.edit_item:
+            case R.id.calendar_item:
                 Intent intent = new Intent(getActivity(),CalenderActivity.class);
                 //startActivity(intent);
-                startActivityForResult(intent, GOBACK_TO_FRAG3);
+                getActivity().startActivityForResult(intent, GOBACK_TO_FRAG3);
                 return true;
-            case R.id.delete_item:
+            case R.id.play_item:
                 timer.cancel();
                 interval = 0;
                 for(int i=0;i<markers.size();i++)
@@ -261,6 +263,9 @@ public class option3Fragment extends Fragment {
                 .between("date", today.getTime(), new Date().getTime())
                 .findFirst();
 
+        DateObject a = realm.where(DateObject.class)
+                .between("date", today.getTime(), new Date().getTime()).findFirst();
+
         realm.beginTransaction();
         RealmList<LocationObject> locationList = new RealmList<>();
         if(result != null) {
@@ -273,6 +278,7 @@ public class option3Fragment extends Fragment {
             double lng = location.getLongitude();
             todayCourse.add(new LatLng(lat,lng));
         }
+
         realm.commitTransaction();
         realm.close();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();

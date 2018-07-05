@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     public static ContactList contactList;
     private boolean redirect_flag = false;
     private String redirect_contactid = null;
+
+    private boolean go_to_frag2 = true;
 
 
 
@@ -236,8 +239,12 @@ public class MainActivity extends AppCompatActivity {
 
             contactList.sorting(false);
             contactList.sorting(true);
-            if (!redirect_flag && result != null) {
+            if (!redirect_flag && result != null && go_to_frag2) {
                 loadFragment(new PhonebookFragment());
+            }
+
+            if (go_to_frag2 == false){
+                go_to_frag2 = false;
             }
 
             if (pDialog.isShowing())
@@ -256,19 +263,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("test4", "onResume called");
         String test = getIntent().getStringExtra("Fragment");
         if(test != null){
+            Log.d("test4", "test intent : " + test);
             loadFragment(new option3Fragment());
             return;
         }
+        getIntent().removeExtra("Fragment");
+        Log.d("test4", "here");
         contactList = new ContactList();
         locationAndContactsTask(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("test4", "onActivityResult called");
+        Log.d("test4", "requestCode : " + Integer.toString(requestCode));
         if (requestCode == option3Fragment.GOBACK_TO_FRAG3) {
             if (resultCode == RESULT_OK) {
+                Log.d("test4", "onActivityResult called2");
+                go_to_frag2 = false;
                 loadFragment(new option3Fragment());
                 return;
             }

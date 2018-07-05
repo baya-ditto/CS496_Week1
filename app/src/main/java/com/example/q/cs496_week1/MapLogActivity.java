@@ -15,6 +15,7 @@ import android.os.SystemClock;
 import android.support.annotation.ColorRes;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -71,6 +72,7 @@ public class MapLogActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#808080\">" + "기록 보기" + "</font>"));
 
         Intent intent = getIntent();
         pickedList = intent.getLongArrayExtra("dates");
@@ -88,7 +90,11 @@ public class MapLogActivity extends AppCompatActivity {
 
         mMapView.onResume(); // needed to get the map to display immediately
 
+        Log.d("PICKSD", String.valueOf(pickedList.length));
         latLngList = new ArrayList[pickedList.length];
+        for (int temp = 0; temp < pickedList.length; ++temp){
+            latLngList[temp] = new ArrayList<LatLng>();
+        }
 
         Calendar c = Calendar.getInstance();
         c.setTime(end);
@@ -106,6 +112,7 @@ public class MapLogActivity extends AppCompatActivity {
         Log.d("TESTT",String.valueOf(end));
 
         realm.beginTransaction();
+
         for(int i=0;i<result.size();i++){
             RealmList<LocationObject> arr = result.get(i).getLocations();
             for(int j=0;j<arr.size();j++){
@@ -115,7 +122,6 @@ public class MapLogActivity extends AppCompatActivity {
                 latLngList2.add(loc);
             }
         }
-        Log.d("TESTT", String.valueOf(latLngList2.size()));
 
         realm.commitTransaction();
         realm.close();
@@ -176,9 +182,9 @@ public class MapLogActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem edit = menu.add(Menu.NONE, R.id.edit_item, 10, R.string.edit_item);
-        edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        edit.setIcon(R.drawable.ic_edit);
+        MenuItem play = menu.add(Menu.NONE, R.id.play_item, 10, "재생");
+        play.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        play.setIcon(R.drawable.ic_play_arrow_black_24dp);
         return true;
     }
 
@@ -190,7 +196,7 @@ public class MapLogActivity extends AppCompatActivity {
                 intent1.putExtra("Fragment","3");
                 startActivity(intent1);
                 return true;
-            case R.id.edit_item:
+            case R.id.play_item:
                 timer.cancel();
                 interval = 0;
                 for(int i=0;i<markers.size();i++)

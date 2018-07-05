@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/calendar_item"
+        android:orderInCategory="10"
+        android:title="달력"
+        android:icon="@drawable/ic_calendar_black_24dp" />
+    <item
+        android:id="@+id/play_item"
+        android:orderInCategory="10"
+        android:title="재생"
+        android:icon="@drawable/ic_play_arrow_black_24dp" />
+    <item
+        android:id="@+id/complete_item"
+        android:orderInCategory="10"
+        android:title="완료" />
+</menu>

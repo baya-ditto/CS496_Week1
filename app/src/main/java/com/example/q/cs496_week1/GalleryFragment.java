@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,9 @@ public class GalleryFragment extends Fragment {
 
     private int lastIndex;
     private int tmp=0;
+
+
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         rootView = inflater.inflate(R.layout.activity_galley, container, false);
 
@@ -211,6 +215,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#808080\">" + "갤러리" + "</font>"));
         new loadGallery().execute();
     }
 

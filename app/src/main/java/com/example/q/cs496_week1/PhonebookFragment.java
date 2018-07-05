@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.JsonReader;
 import android.util.Log;
 import android.util.Pair;
@@ -69,7 +70,7 @@ public class PhonebookFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle("전화번호부");
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(Html.fromHtml("<font color=\"#808080\">" + "전화번호부" + "</font>"));
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -177,10 +178,12 @@ public class PhonebookFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem item = menu.add(Menu.NONE, R.id.select_item, 50, "선택");
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setTitle(Html.fromHtml("<font color=\"#808080\">" + "선택" + "</font>"));
 
         item = menu.add(Menu.NONE, R.id.cancel_item, 40, "취소");
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         item.setVisible(false);
+        item.setTitle(Html.fromHtml("<font color=\"#808080\">" + "취소" + "</font>"));
         this.my_menu = menu;
         super.onCreateOptionsMenu(menu,inflater);
     }
@@ -204,7 +207,7 @@ public class PhonebookFragment extends Fragment {
                     MenuItem cancel_item = (MenuItem) (this.my_menu).findItem(R.id.cancel_item);
                     cancel_item.setVisible(true);
 
-                    item.setTitle("삭제");
+                    item.setTitle(Html.fromHtml("<font color=\"#808080\">" + "삭제" + "</font>"));
                     selected_cid_list.clear();
                     for (int i = firstVisibleItemPosition; i <= recyclerView.getChildCount() && i <= lastVisibleItemPosition; ++i) {
                         RecyclerAdapter.ViewHolder holder = (RecyclerAdapter.ViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
@@ -242,7 +245,7 @@ public class PhonebookFragment extends Fragment {
                     holder.select_box.setVisibility(View.GONE);
                 }
                 item.setVisible(false);
-                this.my_menu.findItem(R.id.select_item).setTitle("선택");
+                this.my_menu.findItem(R.id.select_item).setTitle(Html.fromHtml("<font color=\"#808080\">" + "선택" + "</font>"));
                 selected_cid_list.clear();
                 select_lock = false;
                 return true;

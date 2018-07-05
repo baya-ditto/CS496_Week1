@@ -68,6 +68,8 @@ public class option3Fragment extends Fragment {
     static int interval;
     static Timer timer;
 
+    public static final int GOBACK_TO_FRAG3 = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.option3_fragment, container, false);
@@ -162,7 +164,8 @@ public class option3Fragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.edit_item:
                 Intent intent = new Intent(getActivity(),CalenderActivity.class);
-                startActivity(intent);
+                //startActivity(intent);
+                startActivityForResult(intent, GOBACK_TO_FRAG3);
                 return true;
             case R.id.delete_item:
                 timer.cancel();

@@ -26,7 +26,7 @@
             android:required="false" />
 
         <activity android:name=".MainActivity">
-            <!--android:theme="@style/AppTheme.NoActionBar"> -->
+            <!--android:theme="@style/PhonebookTheme">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

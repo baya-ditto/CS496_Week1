@@ -80,12 +80,18 @@ public class GalleryFragment extends Fragment {
         image.setOnTouchListener(new OnSwipeTouchListener(getActivity().getApplicationContext()){
             @Override
             public void onSwipeRight() {
-                if(lastIndex == 0) return;
+                if(lastIndex == 0){
+                    Toast.makeText(getActivity(), "첫번째 사진입니다.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 gallery.performItemClick(rootView,lastIndex-1, 0);
             }
             @Override
             public void onSwipeLeft() {
-                if(lastIndex >= images.size()) return;
+                if(lastIndex >= images.size()){
+                    Toast.makeText(getActivity(), "마지막 사진입니다.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 gallery.performItemClick(rootView,lastIndex+1, 0);
             }
         });

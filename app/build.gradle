@@ -1,5 +1,6 @@
 //noinspection GradleCompatible
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
@@ -37,4 +38,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'joda-time:joda-time:2.9.9'
     implementation 'com.savvi.datepicker:rangepicker:1.2.0'
+    implementation 'com.google.android.gms:play-services-location:11.0.2'
 }

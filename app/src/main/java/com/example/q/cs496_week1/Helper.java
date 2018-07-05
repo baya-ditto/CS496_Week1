@@ -1,7 +1,10 @@
 package com.example.q.cs496_week1;
 
+import android.content.Context;
 import android.os.Environment;
 
+import com.example.q.cs496_week1.Model.DateObject;
+import com.example.q.cs496_week1.Model.LocationObject;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.joda.time.DateTimeComparator;
@@ -12,6 +15,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 
 import static java.lang.Double.parseDouble;
 
@@ -44,8 +52,7 @@ public class Helper {
         return file;
     }
 
-
-    public static ArrayList<LatLng> getLatLngList(Date start, Date end) {
+        public static ArrayList<LatLng> getLatLngList(Date start, Date end) {
 
         ArrayList<LatLng> ret = new ArrayList<LatLng>();
         BufferedReader br = null;

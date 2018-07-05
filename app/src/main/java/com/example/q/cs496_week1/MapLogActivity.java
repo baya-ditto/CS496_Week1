@@ -1,10 +1,13 @@
 package com.example.q.cs496_week1;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -16,7 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Interpolator;
+import android.widget.Toast;
 
+import com.example.q.cs496_week1.Model.DateObject;
+import com.example.q.cs496_week1.Model.LocationObject;
 import com.google.android.gms.common.util.MapUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,19 +38,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class MapLogActivity extends AppCompatActivity {
 
     MapView mMapView;
     private GoogleMap googleMap;
     long[] pickedList;
-    ArrayList<LatLng> latLngList = new ArrayList<>();
+    ArrayList<LatLng>[] latLngList;
+    ArrayList<LatLng> latLngList2 = new ArrayList<>();
+    ArrayList<Marker> markers = new ArrayList<>();
     Date start, end;
     Activity activity = this;
     static int interval;
@@ -63,13 +77,10 @@ public class MapLogActivity extends AppCompatActivity {
         if(pickedList != null){
             start = new Date(pickedList[0]);
             end = new Date(pickedList[pickedList.length-1]);
-            Calendar c = Calendar.getInstance();
-            c.setTime(end);
-            c.add(Calendar.DATE, 1);
-            end = c.getTime();
-            latLngList = Helper.getLatLngList(start, end);
+
         } else {
-            //TODO: 날짜를 지정해주세요 에러 띄우기
+            Toast.makeText(this,"날짜를 지정해주세요!", Toast.LENGTH_LONG).show();
+            onBackPressed();
         }
 
         mMapView = (MapView) findViewById(R.id.map);
@@ -77,58 +88,98 @@ public class MapLogActivity extends AppCompatActivity {
 
         mMapView.onResume(); // needed to get the map to display immediately
 
-        try {
-            MapsInitializer.initialize(getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
+        latLngList = new ArrayList[pickedList.length];
 
-                PolylineOptions options = new PolylineOptions();
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        Calendar c = Calendar.getInstance();
+        c.setTime(end);
+        c.add(Calendar.DATE, 1);
+        c.add(Calendar.SECOND, -1);
+        end = c.getTime();
+        Realm.init(getApplicationContext());
+        Realm realm = Realm.getDefaultInstance();
 
-                for(int i=0;i<latLngList.size();i++){
-                    LatLng latlng = latLngList.get(i);
-                    builder.include(latlng);
-                    options.add(latlng);
+        RealmResults<DateObject> result =  realm.where(DateObject.class)
+                .between("date", start.getTime(), end.getTime() )
+                .findAll();
 
-                }
-                options.color(Color.RED);
-                options.width(3);
-                googleMap.addPolyline(options);
+        Log.d("TESTT",String.valueOf(start));
+        Log.d("TESTT",String.valueOf(end));
 
-                if(latLngList.size() != 0) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(),200));
-                }
-
-
-                TimerTask task = new TimerTask() {
-                    @Override
-                    public void run() {
-                        activity.runOnUiThread(new Runnable(){
-                            public void run() {
-//                                int count = setInterval(latLngList.size());
-//                                if(count % (latLngList.size() / 10) != 0) return;
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions.draggable(false);
-                                markerOptions.position(latLngList.get(setInterval(setInterval(latLngList.size()))));
-                                Marker pinnedMarker = googleMap.addMarker(markerOptions);
-                                startDropMarkerAnimation(pinnedMarker);
-                            }
-
-                        });
-                    }
-                };
-                timer = new Timer();
-                long delay = 500;
-                long intervalPeriod = 1 * 300;
-                timer.scheduleAtFixedRate(task, delay, intervalPeriod);
-
+        realm.beginTransaction();
+        for(int i=0;i<result.size();i++){
+            RealmList<LocationObject> arr = result.get(i).getLocations();
+            for(int j=0;j<arr.size();j++){
+                LocationObject location = arr.get(j);
+                LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                latLngList[i].add(loc);
+                latLngList2.add(loc);
             }
-        });
+        }
+        Log.d("TESTT", String.valueOf(latLngList2.size()));
+
+        realm.commitTransaction();
+        realm.close();
+
+        if(latLngList2.size() == 0){
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle("오류")
+                    .setMessage("설정된 날짜에 해당하는 기록이 없습니다.")
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // continue with delete
+                            dialog.dismiss();
+                            onBackPressed();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        } else {
+
+            try {
+                MapsInitializer.initialize(getApplicationContext());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mMapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap mMap) {
+                    googleMap = mMap;
+
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    Random rand = new Random();
+
+                    for (int i = 0; i < latLngList.length; i++) {
+                        if (latLngList[i].size() == 0) continue;
+                        PolylineOptions options = new PolylineOptions();
+                        options.color(Color.argb(255, rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)));
+                        options.width(3);
+                        for (int j = 0; j < latLngList[i].size(); j++) {
+                            LatLng latlng = latLngList[i].get(j);
+                            options.add(latlng);
+                            builder.include(latlng);
+                        }
+                        googleMap.addPolyline(options);
+                    }
+
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 200));
+
+                    doMarkerAnimation(3000);
+                }
+            });
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem edit = menu.add(Menu.NONE, R.id.edit_item, 10, R.string.edit_item);
+        edit.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        edit.setIcon(R.drawable.ic_edit);
+        return true;
     }
 
     @Override
@@ -138,6 +189,13 @@ public class MapLogActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(this, MainActivity.class);
                 intent1.putExtra("Fragment","3");
                 startActivity(intent1);
+                return true;
+            case R.id.edit_item:
+                timer.cancel();
+                interval = 0;
+                for(int i=0;i<markers.size();i++)
+                    markers.get(i).remove();
+                doMarkerAnimation(100);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -181,9 +239,39 @@ public class MapLogActivity extends AppCompatActivity {
         mMapView.onLowMemory();
     }
 
-    private static final int setInterval(int size) {
-        if (interval == size -1)
-            timer.cancel();
+    private void doMarkerAnimation(long delay){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable(){
+                    public void run() {
+                        int count = inclineInterval();
+                        int de = latLngList2.size() / 10;
+                        if (de == 0) de = 1;
+                        while(count % de != 0)
+                            count = inclineInterval();
+
+                        if(count > latLngList2.size() - 1){
+                            timer.cancel();
+                            return;
+                        }
+
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.draggable(false);
+                        markerOptions.position(latLngList2.get(count));
+                        Marker pinnedMarker = googleMap.addMarker(markerOptions);
+                        markers.add(pinnedMarker);
+                        startDropMarkerAnimation(pinnedMarker);
+                    }
+                });
+            }
+        };
+        timer = new Timer();
+        long intervalPeriod = 1 * 700;
+        timer.scheduleAtFixedRate(task, delay, intervalPeriod);
+    }
+
+    private static final int inclineInterval() {
         return interval++;
     }
 

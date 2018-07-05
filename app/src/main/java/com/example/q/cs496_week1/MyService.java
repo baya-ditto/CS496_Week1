@@ -20,13 +20,27 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.q.cs496_week1.Model.DateObject;
+import com.example.q.cs496_week1.Model.LocationObject;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+import io.realm.exceptions.RealmMigrationNeededException;
 
 public class MyService extends Service implements LocationListener {
     ServiceThread thread;
@@ -94,31 +108,60 @@ public class MyService extends Service implements LocationListener {
             }
             Intent intent = new Intent(MyService.this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(MyService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            BufferedWriter bw = null;
-            try {
-                 bw = new BufferedWriter(
-                         new FileWriter(Helper.makeDirectoryAndFile(Helper.SAVEDIRPATH,Helper.SAVEFILEPATH), true));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             fn_getlocation();
+            Realm.init(getApplicationContext());
+            Realm realm = null;
+
             try {
-                long date = new Date().getTime();
-                bw.write(String.valueOf(date)+ "\t"+ String.valueOf(latitude) + "\t" + String.valueOf(longitude));
-                bw.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+                realm = Realm.getInstance(Realm.getDefaultConfiguration());
+            } catch (RealmMigrationNeededException r) {
+                Realm.deleteRealm(Realm.getDefaultConfiguration());
+                realm = Realm.getDefaultInstance();
             }
-            try {
-                bw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            Log.d("FDF", realm.getPath());
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);
+                    cal.set(Calendar.MILLISECOND, 0);
+                    Date today = cal.getTime();
+
+                    DateObject date = realm.where(DateObject.class).equalTo("date", today.getTime()).findFirst();
+
+                    if(date == null){
+                       date = realm.createObject(DateObject.class);
+                       date.setDate(today.getTime());
+                    }
+                    LocationObject location = realm.createObject(LocationObject.class);
+                    location.setLatitude(latitude);
+                    location.setLongitude(longitude);
+                    location.setDate(new Date());
+                    date.addLocation(location);
+                }
+            }, new Realm.Transaction.OnSuccess() {
+                @Override
+                public void onSuccess() {
+                    Log.d("SUCCESS", "뭐");
+                }
+            }, new Realm.Transaction.OnError() {
+                @Override
+                public void onError(Throwable error) {
+                    Log.d("FAIL", "뭐");
+                }
+            });
+            realm.close();
         }
     }
 
     private void fn_getlocation() {
+        //latitude=  current Latitude
+        //longitude = current Longitude
+
         locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         isGPSEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         isNetworkEnable = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -126,19 +169,24 @@ public class MyService extends Service implements LocationListener {
         if (!isGPSEnable && !isNetworkEnable) {
 
         } else {
-            if (isNetworkEnable || isGPSEnable) {
-                location = null;
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+            location = null;
+            if (locationManager != null) {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, this);
-                if(locationManager != null) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
+
+                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null) {
+                    Log.d("GPS TEST", "GPS not worked, get location by network");
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+
+                if (location != null) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
-
-                    if(location != null) {
-                        Log.d("latitude", latitude+ "");
-                        Log.d("longitude", longitude+ "");
-                    }
+                    Log.d("latitude", latitude + "");
+                    Log.d("longitude", longitude + "");
+                } else {
+                    Log.d("GPS TEST", "Both GPS method did not work");
                 }
             }
         }

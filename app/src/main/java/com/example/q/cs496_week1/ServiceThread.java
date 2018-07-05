@@ -26,7 +26,7 @@ public class ServiceThread extends Thread{
         while(isRun){
             handler.sendEmptyMessage(0);
             try{
-                Thread.sleep(100000);
+                Thread.sleep(300000);
             } catch(Exception e){}
         }
     }

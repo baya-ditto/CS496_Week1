@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         if (redirect_flag)
             return;
 
-        Intent intent = new Intent(getApplicationContext(),MyService.class);
+        /*Intent intent = new Intent(getApplicationContext(),MyService.class);
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
 
         boolean isServiceRunning = false;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
             startService(intent);
         }
-
+*/
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

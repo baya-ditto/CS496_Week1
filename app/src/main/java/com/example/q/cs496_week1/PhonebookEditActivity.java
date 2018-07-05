@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.telephony.PhoneNumberUtils;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -53,11 +54,17 @@ public class PhonebookEditActivity extends AppCompatActivity {
         contacts = MainActivity.contactList.getJSONObjectByContactId(contactid);
         show_prev_data();
 
+        Toolbar mToolbar = (Toolbar)findViewById(R.id.edit_toolbar);
+        setSupportActionBar(mToolbar);
 
-        Button save_but = findViewById(R.id.save_button);
-        Button cancel_but = findViewById(R.id.cancel_button);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("연락처 편집");
 
-        save_but.setOnClickListener(new View.OnClickListener() {
+       /* Button save_but = findViewById(R.id.save_button);
+        Button cancel_but = findViewById(R.id.cancel_button);*/
+
+        /*save_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
                 Log.d("TESTTEST", "Here?");
@@ -84,11 +91,51 @@ public class PhonebookEditActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-                finish();
+                AlertDialog new_dialog = builder.create();
+                new_dialog.show();
             }
-        });
-
+        });*/
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        MenuItem save = menu.add(Menu.NONE, R.id.save_item, 50, "SAVE");
+        save.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        save.setIcon(R.drawable.ic_save_black_24dp);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookEditActivity.this);
+                builder.setTitle("정말 돌아가시겠습니까?\n입력한 정보는 저장되지 않습니다.");
+                builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                });
+                builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                return true;
+            case R.id.save_item:
+                save_interact();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
 
     private void save_interact() {
@@ -139,13 +186,16 @@ public class PhonebookEditActivity extends AppCompatActivity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.number_info_edit, null);
 
+        String[] tag_item = {null, null};
         EditText number_text_view = info_layout.findViewById(R.id.number);
         if (number != null) {
             number_text_view.setText(number);
-            number_text_view.setTag(number);
+            tag_item[0] = number;
         }
         if (data_id != null)
-            number_text_view.setTag(data_id);
+            tag_item[1] = data_id;
+
+        number_text_view.setTag(tag_item);
 
         Button clear_number_button = info_layout.findViewById(R.id.clear_number);
         clear_number_button.setTag(number_text_view);
@@ -162,8 +212,9 @@ public class PhonebookEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 EditText number_tv = (EditText) v.getTag();
-                if (number_tv.getTag() != null)
-                    number_tv.setText((String) number_tv.getTag());
+                String[] tag_item = (String[]) number_tv.getTag();
+                if(tag_item[0] != null)
+                    number_tv.setText(tag_item[0]);
             }
         });
         return info_layout;
@@ -173,13 +224,15 @@ public class PhonebookEditActivity extends AppCompatActivity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_edit, null);
 
-        EditText email_text_view = info_layout.findViewById(R.id.email);
+        String[] tag_item = {null, null};
+        final EditText email_text_view = info_layout.findViewById(R.id.email);
         if (email != null) {
             email_text_view.setText(email);
-            email_text_view.setTag(email);
+            tag_item[0] = email;
         }
         if (data_id != null)
-            email_text_view.setTag(data_id);
+            tag_item[1] = data_id;
+        email_text_view.setTag(tag_item);
 
         Button type_button = info_layout.findViewById(R.id.type);
         switch (type) {
@@ -209,8 +262,9 @@ public class PhonebookEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText email_tv = (EditText) v.getTag();
-                if (email_tv.getTag() != null)
-                    email_tv.setText((String) email_tv.getTag());
+                String[] tag_item = (String[]) email_tv.getTag();
+                if (tag_item[0] != null)
+                    email_tv.setText(tag_item[0]);
             }
         });
         return info_layout;
@@ -279,7 +333,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
             if (v instanceof LinearLayout){
                 EditText number_text = v.findViewById(R.id.number);
                 String number = number_text.getText().toString();
-                String data_id = (String) number_text.getTag();
+                String data_id = ((String[]) number_text.getTag())[1];
                 numbers.add(new Pair<String, String>(my_phone_format(number), data_id));
             }
         }
@@ -306,7 +360,7 @@ public class PhonebookEditActivity extends AppCompatActivity {
                 Button type_button = v.findViewById(R.id.type);
                 String type = type_button.getText().toString();
 
-                String data_id = (String) email_text.getTag();
+                String data_id = ((String[]) email_text.getTag())[1];
 
                 email_infos.add(new Triplet<String, String, String>(email_seq.toString(), type, data_id));
             }

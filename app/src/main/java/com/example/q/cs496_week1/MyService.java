@@ -180,12 +180,13 @@ public class MyService extends Service implements LocationListener {
                     location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 }
 
-                if (location != null) {
+                if(location != null) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
-                    Log.d("latitude", latitude + "");
-                    Log.d("longitude", longitude + "");
-                } else {
+                    Log.d("latitude", latitude+ "");
+                    Log.d("longitude", longitude+ "");
+                }
+                else {
                     Log.d("GPS TEST", "Both GPS method did not work");
                 }
             }

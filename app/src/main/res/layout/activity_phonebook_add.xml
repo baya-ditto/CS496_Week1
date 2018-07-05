@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".PhonebookAddActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhonebookAddActivity"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/add_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/add_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:theme="@style/PhonebookTheme"
+            app:layout_collapseMode="pin"
+            />
+    </android.support.design.widget.AppBarLayout>
 
 
     <android.support.v4.widget.NestedScrollView
@@ -19,13 +32,13 @@
             android:id="@+id/data_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
                 android:text="이름"
                 android:gravity="center" />
 
@@ -108,4 +121,4 @@
                 android:textColor="@color/basic" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

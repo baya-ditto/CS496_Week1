@@ -3,10 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="weak_pink">#FF99CC</color>
     <color name="white">#ffffff</color>
     <color name="white_gray">#808080</color>
     <color name="black">#000000</color>
     <color name="basic">@android:color/tab_indicator_text</color>
     <color name="transparent">@android:color/transparent</color>
     <color name="green"> #009900</color>
+    <color name="strong_brown"> #663300 </color>
 </resources>

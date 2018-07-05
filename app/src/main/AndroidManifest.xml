@@ -26,6 +26,7 @@
             android:required="false" />
 
         <activity android:name=".MainActivity">
+            <!--android:theme="@style/AppTheme.NoActionBar"> -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,8 +35,11 @@
         </activity>
         <activity
             android:name=".PhonebookDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".PhonebookAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity android:name=".PhonebookEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
@@ -60,7 +64,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".PhonebookAddActivity" />
+
         <activity
             android:name=".MapLogActivity"
             android:label="@string/title_activity_map_log"></activity>

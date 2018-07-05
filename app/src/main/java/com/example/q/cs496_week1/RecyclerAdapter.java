@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,8 +44,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         RecyclerItem item = mList.get(position);
         viewHolder.name.setText(item.getName());
         viewHolder.img.setBackgroundResource(item.getImage());
-        viewHolder.itemView.setTag(item);
+        viewHolder.select_box.setChecked(item.getSelected());
+        if (PhonebookFragment.select_flag)
+            viewHolder.select_box.setVisibility(View.VISIBLE);
+        else
+            viewHolder.select_box.setVisibility(View.GONE);
 
+        viewHolder.itemView.setTag(item);
     }
 
     @Override
@@ -56,12 +62,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         public ImageView img;
         public TextView name;
+        public CheckBox select_box;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             img = (ImageView) itemView.findViewById(R.id.contact_pic);
             name = (TextView) itemView.findViewById(R.id.contact_name);
+            select_box = (CheckBox) itemView.findViewById(R.id.contact_select);
         }
     }
 }

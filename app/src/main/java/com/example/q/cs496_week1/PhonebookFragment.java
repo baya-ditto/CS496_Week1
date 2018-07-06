@@ -34,7 +34,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Toast;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,7 +103,6 @@ public class PhonebookFragment extends Fragment {
                 else {
                     Intent intent = new Intent(getActivity(), PhonebookDetailActivity.class);
                     intent.putExtra("index", position);
-                    //Toast.makeText(getActivity().getApplicationContext(), "Pos : " + Integer.toString(position), Toast.LENGTH_LONG).show();
                     intent.putExtra(list_tag, starredListNum);
                     startActivity(intent);
                 }
@@ -136,7 +135,6 @@ public class PhonebookFragment extends Fragment {
                 else {
                     Intent intent = new Intent(getActivity(), PhonebookDetailActivity.class);
                     intent.putExtra("index", position);
-                    //Toast.makeText(getActivity().getApplicationContext(), "Pos : " + Integer.toString(position), Toast.LENGTH_LONG).show();
                     intent.putExtra(list_tag, normalListNum);
                     startActivity(intent);
                 }
@@ -149,7 +147,6 @@ public class PhonebookFragment extends Fragment {
         FloatingActionButton fab = (FloatingActionButton)view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                Toast.makeText(getActivity(),"ADD",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getActivity(), PhonebookAddActivity.class);
                 startActivity(intent);
             }
@@ -198,7 +195,6 @@ public class PhonebookFragment extends Fragment {
                 if (select_lock)
                     return false;
                 select_lock = true;
-                Toast.makeText(getActivity().getApplicationContext(),"선택", Toast.LENGTH_LONG).show();
 
                 if (select_flag == false) {
                     // select mode 진입

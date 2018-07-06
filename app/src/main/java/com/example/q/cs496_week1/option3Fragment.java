@@ -2,17 +2,24 @@ package com.example.q.cs496_week1;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.DrawableRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.text.Html;
 import android.util.Log;
@@ -23,6 +30,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.q.cs496_week1.Model.DateObject;
 import com.example.q.cs496_week1.Model.LocationObject;
@@ -32,6 +43,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -65,11 +78,15 @@ public class option3Fragment extends Fragment {
     MapView mMapView;
     private GoogleMap googleMap;
     private ArrayList<LatLng> todayCourse = new ArrayList<>();
+    private double distance_of_today = 0;
+
     ArrayList<Marker> markers = new ArrayList<>();
     static int interval;
     static Timer timer;
 
     public static final int GOBACK_TO_FRAG3 = 1;
+    public static int marker_id = -1;
+    public static ArrayList<Integer> marker_set = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,6 +96,15 @@ public class option3Fragment extends Fragment {
         mMapView.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        Date today = Calendar.getInstance().getTime();
+        Log.d("Make data test", "today.getTime() = " + today.getTime());
+        marker_set.add(R.drawable.smile_face_t);
+        marker_set.add(R.drawable.ic_tag_faces_black_24dp);
+        marker_set.add(R.drawable.two_foot_t_up);
+        marker_set.add(R.drawable.ic_airplanemode_active_black_24dp);
+        marker_set.add(R.drawable.ic_pool_black_24dp);
+
+
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
@@ -86,6 +112,63 @@ public class option3Fragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ImageButton marker_menu = rootView.findViewById(R.id.select_marker);
+        LinearLayout options = rootView.findViewById(R.id.marker_options);
+        Log.d("Marker test", "Add options");
+        for (int i = 0; i < options.getChildCount(); ++i){
+            ImageButton v = (ImageButton) options.getChildAt(i);
+            v.setTag(marker_set.get(i));
+            v.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int srcid = (int) v.getTag();
+                    if (srcid == marker_id)
+                        marker_id = -1;
+                    else
+                        marker_id = (int) v.getTag();
+                }
+            });
+        }
+        /*for (int srcid : marker_set){
+
+            Log.d("Marker test", "start add options");
+            ImageButton v = new ImageButton(getContext());
+
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(50, 50);
+            v.setLayoutParams(params);
+            v.setBackgroundResource(R.color.transparent);
+            v.setAdjustViewBounds(true);
+            v.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+            v.setTag(srcid);
+            v.setImageResource(srcid);
+
+            Log.d("Marker test", "Clicker setting");
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v){
+                    marker_id = (int) ((ImageButton) v).getTag();
+                    Log.d("Marker test", "Clicked! marker_id = " + String.valueOf(marker_id));
+                }
+            });
+            options.addView(v);
+        }*/
+        marker_menu.setTag(options);
+        marker_menu.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Log.d("Marker test", "menu clicked");
+                LinearLayout options = (LinearLayout) v.getTag();
+                if(options.getVisibility() == View.GONE) {
+                    options.setVisibility(View.VISIBLE);
+                }
+                else {
+                    options.setVisibility(View.GONE);
+                }
+            }
+        });
+
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
@@ -106,6 +189,9 @@ public class option3Fragment extends Fragment {
                 doMarkerAnimation(3000);
             }
         });
+
+
+
 
         return rootView;
     }
@@ -166,7 +252,6 @@ public class option3Fragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.calendar_item:
                 Intent intent = new Intent(getActivity(),CalenderActivity.class);
-                //startActivity(intent);
                 getActivity().startActivityForResult(intent, GOBACK_TO_FRAG3);
                 return true;
             case R.id.play_item:
@@ -179,6 +264,30 @@ public class option3Fragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /*private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }*/
+
+    private Bitmap bitmapFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    private Bitmap get_and_resize_MapIcons(Context context, int vectorResId,int width, int height){
+        Bitmap imageBitmap = bitmapFromVector(context, vectorResId);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
     }
 
     private void doMarkerAnimation(long delay){
@@ -200,9 +309,12 @@ public class option3Fragment extends Fragment {
                             return;
                         }
 
+                        //BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.two_foot);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.draggable(false);
                         markerOptions.position(todayCourse.get(count));
+                        if (option3Fragment.marker_id != -1)
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_and_resize_MapIcons(getActivity(), option3Fragment.marker_id, 100, 100)));
                         Marker pinnedMarker = googleMap.addMarker(markerOptions);
                         markers.add(pinnedMarker);
                         startDropMarkerAnimation(pinnedMarker);
@@ -259,6 +371,33 @@ public class option3Fragment extends Fragment {
         Realm.init(getContext());
         Realm realm = Realm.getDefaultInstance();
 
+        // For test
+        /*realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                DateObject date = realm.createObject(DateObject.class);
+                date.setDate((new Date(2018, 7, 3)).getTime());
+                LocationObject location = realm.createObject(LocationObject.class);
+                location.setLatitude(37.421998333330000);
+                location.setLongitude(-122.08400000006000);
+                location.setDate(new Date(2018,7,3,11,20));
+                date.addLocation(location);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                Log.d("SUCCESS", "Test data inserted");
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                //Log.d("FAIL", "뭐");
+            }
+        });*/
+        //realm.close();
+
+
+
         DateObject result =  realm.where(DateObject.class)
                 .between("date", today.getTime(), new Date().getTime())
                 .findFirst();
@@ -270,6 +409,8 @@ public class option3Fragment extends Fragment {
         RealmList<LocationObject> locationList = new RealmList<>();
         if(result != null) {
             locationList = result.getLocations();
+            distance_of_today = result.getDistance_of_day();
+            ((TextView) getActivity().findViewById(R.id.today_dist)).setText("약 " + String.valueOf(distance_of_today) + "km");
         }
 
         for(int i=0;i<locationList.size();i++){

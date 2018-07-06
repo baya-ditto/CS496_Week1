@@ -3,31 +3,29 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary"> @color/strong_brown</item>
+        <item name="android:textColorPrimary"> @color/basic</item>
+        <item name="android:background"> @color/white</item>
+        <item name="android:windowBackground"> @color/white</item>
     </style>
 
     <style name="PhonebookTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimary">#CCFFE5</item>
         <item name="colorPrimaryDark">@color/white_gray</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary"> @color/strong_brown</item>
+        <item name="android:textColorPrimary"> @color/white_gray</item>
         <item name="android:background"> @color/colorPrimary</item>
-
     </style>
 
     <style name="MainTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimary">#CCFFE5</item>
         <item name="colorPrimaryDark">@color/white_gray</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary"> @color/strong_brown</item>
-        <item name="android:textColorSecondary"> @color/strong_brown</item>
-        <item name="android:titleTextColor"> @color/strong_brown</item>
-        <item name="android:subtitleTextColor"> @color/strong_brown</item>
-        <item name="android:textColor">@color/strong_brown</item>
-        <item name="android:background"> @color/colorPrimary</item>
+        <item name="android:textColor"> @color/basic</item>
+        <item name="android:textColorPrimary">@color/black</item>
+
 
     </style>
 

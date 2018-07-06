@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.ContactsContract;
@@ -41,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean redirect_flag = false;
     private String redirect_contactid = null;
 
-    private boolean go_to_frag2 = true;
+    private boolean go_to_phonebook = true;
 
-
+    //private Fragment phonebook_fragment = null;
+    private Fragment gallery_fragment = null;
+    //private Fragment map_fragment = null;
 
     private static String[] PERMISSIONS = {
             Manifest.permission.READ_CONTACTS,
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         if (getIntent().getIntExtra(redirectTag, -1) == _phonebook_detail) {
             redirect_flag = true;
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if(!isServiceRunning){
+            // TODO: 메시지 바꾸기
             Toast.makeText(getApplicationContext(),"Service 시작",Toast.LENGTH_SHORT).show();
             startService(intent);
         }
@@ -91,8 +96,9 @@ public class MainActivity extends AppCompatActivity {
                         loadFragment(fragment);
                         return true;
                     case R.id.action_gallery:
-                        fragment = new GalleryFragment();
-                        loadFragment(fragment);
+                        if (gallery_fragment == null)
+                            gallery_fragment = new GalleryFragment();
+                        loadFragment(gallery_fragment);
                         return true;
                     case R.id.action_three:
                         fragment = new option3Fragment();
@@ -186,8 +192,6 @@ public class MainActivity extends AppCompatActivity {
                                 ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
                                 new String[]{id}, null);
                         while (emailCur.moveToNext()) {
-                            // This would allow you get several email addresses
-                            // if the email addresses were stored in an array
                             String email = emailCur.getString(
                                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                             String emailType = emailCur.getString(
@@ -210,12 +214,10 @@ public class MainActivity extends AppCompatActivity {
                         if (noteCur.moveToFirst()) {
                             note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
                             System.out.println("Note " + note);
-                            //notes.add(note);
                         }
                         noteCur.close();
 
                         // get starred info
-
                         Cursor starCur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + " =?", new String[]{id}, null);
                         if (starCur.moveToFirst()) {
                             starred = starCur.getString(starCur.getColumnIndex(ContactsContract.Contacts.STARRED));
@@ -239,12 +241,12 @@ public class MainActivity extends AppCompatActivity {
 
             contactList.sorting(false);
             contactList.sorting(true);
-            if (!redirect_flag && result != null && go_to_frag2) {
+            if (!redirect_flag && result != null && go_to_phonebook) {
                 loadFragment(new PhonebookFragment());
             }
 
-            if (go_to_frag2 == false){
-                go_to_frag2 = false;
+            if (go_to_phonebook == false){
+                go_to_phonebook = true;
             }
 
             if (pDialog.isShowing())
@@ -263,14 +265,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         Log.d("test4", "onResume called");
         String test = getIntent().getStringExtra("Fragment");
         if(test != null){
-            Log.d("test4", "test intent : " + test);
+            getIntent().removeExtra("Fragment");
             loadFragment(new option3Fragment());
             return;
         }
-        getIntent().removeExtra("Fragment");
+
         Log.d("test4", "here");
         contactList = new ContactList();
         locationAndContactsTask(this);
@@ -280,13 +283,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("test4", "onActivityResult called");
         Log.d("test4", "requestCode : " + Integer.toString(requestCode));
-        if (requestCode == option3Fragment.GOBACK_TO_FRAG3) {
-            if (resultCode == RESULT_OK) {
-                Log.d("test4", "onActivityResult called2");
-                go_to_frag2 = false;
-                loadFragment(new option3Fragment());
+        switch(requestCode) {
+            case option3Fragment.GOBACK_TO_FRAG3:
+                if (resultCode == RESULT_OK) {
+                    Log.d("test4", "onActivityResult called2");
+                    go_to_phonebook = false;
+                    loadFragment(new option3Fragment());
+                    return;
+                }
+            default:
                 return;
-            }
         }
     }
 }

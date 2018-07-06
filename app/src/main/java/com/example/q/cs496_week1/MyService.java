@@ -113,12 +113,8 @@ public class MyService extends Service implements LocationListener {
             Realm.init(getApplicationContext());
             Realm realm = null;
 
-            try {
-                realm = Realm.getInstance(Realm.getDefaultConfiguration());
-            } catch (RealmMigrationNeededException r) {
-                Realm.deleteRealm(Realm.getDefaultConfiguration());
-                realm = Realm.getDefaultInstance();
-            }
+            realm = Realm.getInstance(Realm.getDefaultConfiguration());
+            realm = Realm.getDefaultInstance();
 
             Log.d("FDF", realm.getPath());
             realm.executeTransactionAsync(new Realm.Transaction() {
@@ -137,6 +133,7 @@ public class MyService extends Service implements LocationListener {
                        date = realm.createObject(DateObject.class);
                        date.setDate(today.getTime());
                     }
+
                     LocationObject location = realm.createObject(LocationObject.class);
                     location.setLatitude(latitude);
                     location.setLongitude(longitude);
@@ -146,12 +143,12 @@ public class MyService extends Service implements LocationListener {
             }, new Realm.Transaction.OnSuccess() {
                 @Override
                 public void onSuccess() {
-                    Log.d("SUCCESS", "뭐");
+                    //Log.d("SUCCESS", "뭐");
                 }
             }, new Realm.Transaction.OnError() {
                 @Override
                 public void onError(Throwable error) {
-                    Log.d("FAIL", "뭐");
+                    //Log.d("FAIL", "뭐");
                 }
             });
             realm.close();

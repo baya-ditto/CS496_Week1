@@ -198,7 +198,6 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(PhonebookDetailActivity.this, PhonebookEditActivity.class);
                 intent.putExtra("contactid", contacts.optString("contactid"));
                 startActivity(intent);
-                //Toast.makeText(getApplicationContext(), "DEBUG", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.delete_item:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -208,7 +207,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(getApplicationContext(), "okay", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_LONG).show();
                                 deleteContact();
                                 onBackPressed();
                             }
@@ -217,7 +216,6 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(getApplicationContext(), "Deny", Toast.LENGTH_LONG).show();
                             }
                         });
                 builder.show();
@@ -258,7 +256,7 @@ public class PhonebookDetailActivity extends AppCompatActivity {
                 else
                     Log.d("Star test", "something goes wrong");
 
-                Toast.makeText(getApplicationContext(), "DEBUG3", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Starred", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

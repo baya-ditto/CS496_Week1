@@ -199,18 +199,6 @@ public class GalleryFragment extends Fragment {
 
     }
 
-    @Override
-    public void onDestroyView() {
-//        if (rootView != null)
-//        {
-//            if (MainActivity.gallery_storage == null)
-//                MainActivity.gallery_storage = new gallery_package();
-//
-////            Log.d("test", "gallery_storage.input = " + MainActivity.gallery_storage.input);
-//        }
-        super.onDestroyView();
-//        Log.d("test", "onDestroyView finished");
-    }
 
     @Override
     public void onResume(){

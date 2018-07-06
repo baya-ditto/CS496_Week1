@@ -107,7 +107,7 @@ public class PhonebookAddActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 AlertDialog.Builder builder = new AlertDialog.Builder(PhonebookAddActivity.this);
-                builder.setTitle("정말 돌아가시겠습니까? 입력한 정보는 저장되지 않습니다.");
+                builder.setTitle("정말 돌아가시겠습니까?\n입력한 정보는 저장되지 않습니다.");
                 builder.setPositiveButton("네", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -203,7 +203,7 @@ public class PhonebookAddActivity extends AppCompatActivity {
         return info_layout;
     }
 
-    private LinearLayout get_email_info_layout(String email, String type){
+    private LinearLayout get_email_info_layout(final String email, String type){
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout info_layout = (LinearLayout) vi.inflate(R.layout.email_info_add, null);
 
@@ -215,14 +215,37 @@ public class PhonebookAddActivity extends AppCompatActivity {
         switch (type) {
             case "1":
                 type_button.setText("개인");
+                type_button.setTag(1);
                 break;
             case "2":
                 type_button.setText("직장");
+                type_button.setTag(2);
                 break;
             default:
                 type_button.setText("기타");
+                type_button.setTag(0);
                 break;
         }
+        type_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                int type = (int) v.getTag();
+                switch (type % 3) {
+                    case 1:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("직장");
+                        return;
+                    case 2:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("기타");
+                        return;
+                    default:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("개인");
+                        return;
+                }
+            }
+        });
 
         Button delete_email_button = info_layout.findViewById(R.id.delete_email);
         delete_email_button.setTag(info_layout);

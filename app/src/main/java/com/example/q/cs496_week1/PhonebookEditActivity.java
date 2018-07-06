@@ -238,14 +238,37 @@ public class PhonebookEditActivity extends AppCompatActivity {
         switch (type) {
             case "1":
                 type_button.setText("개인");
+                type_button.setTag(1);
                 break;
             case "2":
                 type_button.setText("직장");
+                type_button.setTag(2);
                 break;
             default:
                 type_button.setText("기타");
+                type_button.setTag(0);
                 break;
         }
+        type_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                int type = (int) v.getTag();
+                switch (type % 3) {
+                    case 1:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("직장");
+                        return;
+                    case 2:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("기타");
+                        return;
+                    default:
+                        v.setTag((type + 1) % 3);
+                        ((Button) v).setText("개인");
+                        return;
+                }
+            }
+        });
 
         Button clear_email_button = info_layout.findViewById(R.id.clear_email);
         clear_email_button.setTag(email_text_view);

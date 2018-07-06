@@ -44,7 +44,8 @@
         <activity android:name=".PhonebookEditActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
-        <activity android:name=".CalenderActivity" />
+        <activity android:name=".CalenderActivity"
+            android:theme="@style/MainTheme"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -68,7 +69,8 @@
 
         <activity
             android:name=".MapLogActivity"
-            android:label="@string/title_activity_map_log"></activity>
+            android:label="@string/title_activity_map_log"
+            android:theme="@style/MainTheme"></activity>
     </application>
 
 </manifest>

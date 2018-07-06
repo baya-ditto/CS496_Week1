@@ -1,10 +1,14 @@
 package com.example.q.cs496_week1;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Build;
@@ -13,13 +17,17 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Interpolator;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.q.cs496_week1.Model.DateObject;
@@ -31,6 +39,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -57,8 +66,8 @@ public class MapLogActivity extends AppCompatActivity {
     MapView mMapView;
     private GoogleMap googleMap;
     long[] pickedList;
-    ArrayList<LatLng>[] latLngList;
-    ArrayList<LatLng> latLngList2 = new ArrayList<>();
+    ArrayList<LatLng>[] latLngList; // i-th date -> loclist of the very date
+    ArrayList<LatLng> latLngList2 = new ArrayList<>(); // total locations within selected dates
     ArrayList<Marker> markers = new ArrayList<>();
     Date start, end;
     Activity activity = this;
@@ -151,6 +160,39 @@ public class MapLogActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            ImageButton marker_menu = findViewById(R.id.select_marker);
+            LinearLayout options = findViewById(R.id.marker_options);
+            Log.d("Marker test", "Add options");
+            for (int i = 0; i < options.getChildCount(); ++i){
+                ImageButton v = (ImageButton) options.getChildAt(i);
+                v.setTag(option3Fragment.marker_set.get(i));
+                v.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        int srcid = (int) v.getTag();
+                        if (srcid == option3Fragment.marker_id)
+                            option3Fragment.marker_id = -1;
+                        else
+                            option3Fragment.marker_id = (int) v.getTag();
+                    }
+                });
+            }
+
+            marker_menu.setTag(options);
+            marker_menu.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    Log.d("Marker test", "menu clicked");
+                    LinearLayout options = (LinearLayout) v.getTag();
+                    if(options.getVisibility() == View.GONE) {
+                        options.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        options.setVisibility(View.GONE);
+                    }
+                }
+            });
+
             mMapView.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap mMap) {
@@ -245,6 +287,21 @@ public class MapLogActivity extends AppCompatActivity {
         mMapView.onLowMemory();
     }
 
+    private Bitmap bitmapFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return bitmap;
+    }
+
+    private Bitmap get_and_resize_MapIcons(Context context, int vectorResId,int width, int height){
+        Bitmap imageBitmap = bitmapFromVector(context, vectorResId);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return resizedBitmap;
+    }
+
     private void doMarkerAnimation(long delay){
         TimerTask task = new TimerTask() {
             @Override
@@ -265,6 +322,8 @@ public class MapLogActivity extends AppCompatActivity {
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.draggable(false);
                         markerOptions.position(latLngList2.get(count));
+                        if (option3Fragment.marker_id != -1)
+                            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(get_and_resize_MapIcons(activity, option3Fragment.marker_id, 100, 100)));
                         Marker pinnedMarker = googleMap.addMarker(markerOptions);
                         markers.add(pinnedMarker);
                         startDropMarkerAnimation(pinnedMarker);

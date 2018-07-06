@@ -24,7 +24,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#f9f9f9">
+                android:background="#ffffff">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -35,20 +35,18 @@
                     android:text="즐겨찾기"
                     android:textSize="20dp"
                     android:textColor="@color/basic"
-                    android:background="#f9f9f9"/>
+                    android:background="#ffffff"/>
                 <Button
                     android:id="@+id/fold_starred"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
                     android:layout_centerVertical="true"
                     android:background="@drawable/ic_keyboard_arrow_down_black_24dp"/>
             </RelativeLayout>
 
-
-            <View
-                android:layout_width="match_parent"
+            <View android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/white_gray"/>
 
@@ -59,13 +57,6 @@
                 android:visibility="gone">
             </android.support.v7.widget.RecyclerView>
 
-        <!--
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/phonebook_starred_list" />
-        -->
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,11 +65,9 @@
                 android:text="연락처"
                 android:textSize="20dp"
                 android:textColor="@color/basic"
-                android:background="@color/white"
-                />
+                android:background="@color/white" />
 
-            <View
-                android:layout_width="match_parent"
+            <View android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:background="@color/white_gray"/>
 
@@ -88,14 +77,6 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white">
             </android.support.v7.widget.RecyclerView>
-
-        <!--    <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/phonebook_list"
-                android:gravity="center_vertical"
-                android:layout_alignTop="@id/phonebook_starred_list"/>-->
-
         </LinearLayout>
     </ScrollView>
 
